@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Test | Irving's blog]]></title>
+  <link href="http://irvingpop.github.io/blog/categories/test/atom.xml" rel="self"/>
+  <link href="http://irvingpop.github.io/"/>
+  <updated>2015-04-09T11:58:10-07:00</updated>
+  <id>http://irvingpop.github.io/</id>
+  <author>
+    <name><![CDATA[Irving Popovetsky]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Hello World]]></title>
+    <link href="http://irvingpop.github.io/blog/2015/04/07/hello-world/"/>
+    <updated>2015-04-07T10:52:17-07:00</updated>
+    <id>http://irvingpop.github.io/blog/2015/04/07/hello-world</id>
+    <content type="html"><![CDATA[<h1>Hello, World!</h1>
+
+<p>Daisy, Daisy, etc etc.</p>
+
+<p><div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">foo</span>
+  <span class="nb">puts</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">wat</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;</span>
+<span class="k">end</span></code></pre></div></p>
+
+<p><img class="<a" src="href="http://replygif.net/i/1463.gif">http://replygif.net/i/1463.gif</a>"></p>
+
+<!-- more -->
+
+
+<pre><code class="ruby">def blah
+  puts 'woohoo'
+end
+</code></pre>
+
+<p>github gist:
+<div><script src='https://gist.github.com/3aee2f63a8fa7ac41f0a.js'></script>
+<noscript><pre><code>{
+  &quot;provider&quot;: &quot;ec2&quot;,
+  &quot;ec2_options&quot;: {
+    &quot;region&quot;: &quot;us-west-2&quot;,
+    &quot;vpc_subnet&quot;: &quot;subnet-b2bb82f4&quot;,
+    &quot;ami_id&quot;: &quot;ami-3d50120d&quot;,
+    &quot;ssh_username&quot;: &quot;ubuntu&quot;,
+    &quot;backend_storage_type&quot;: &quot;drbd&quot;,
+    &quot;ebs_disk_size&quot;: &quot;100&quot;,
+    &quot;use_private_ip_for_ssh&quot;: false,
+    &quot;elb&quot;: true
+  },
+  &quot;default_package&quot;:   &quot;https://web-dl.packagecloud.io/chef/stable/packages/ubuntu/trusty/chef-server-core_12.0.1-1_amd64.deb&quot;,
+  &quot;manage_package&quot;:    &quot;https://web-dl.packagecloud.io/chef/stable/packages/ubuntu/precise/opscode-manage_1.6.2-1_amd64.deb&quot;,
+  &quot;reporting_package&quot;: &quot;https://web-dl.packagecloud.io/chef/stable/packages/ubuntu/precise/opscode-reporting_1.2.2-1_amd64.deb&quot;,
+  &quot;analytics_package&quot;: &quot;https://opscode-analytics-packages.s3.amazonaws.com/1.1.0-rc.4/ubuntu/14.04/x86_64/opscode-analytics_1.1.0-rc.4-1_amd64.deb?AWSAccessKeyId=AKIAI4DC2RTKK4T2T7JQ&amp;Expires=1419461962&amp;Signature=zvtEZJp6NVBqCOPAE%2BWtl6%2BN0L4%3D&quot;,
+  &quot;apply_ec_bugfixes&quot;: false,
+  &quot;lemme_doit&quot;: false,
+  &quot;loadtesters&quot;: {
+    &quot;num_loadtesters&quot;: 50,
+    &quot;num_groups&quot;: 5,
+    &quot;num_containers&quot;: 800
+  },
+  &quot;packages&quot;: {
+  },
+  &quot;layout&quot;: {
+    &quot;topology&quot;: &quot;ha&quot;,
+    &quot;api_fqdn&quot;: &quot;api.trusty.aws&quot;,
+    &quot;manage_fqdn&quot;: &quot;manage.trusty.aws&quot;,
+    &quot;analytics_fqdn&quot;: &quot;analytics.trusty.aws&quot;,
+    &quot;configuration&quot;: {
+      &quot;postgresql&quot;: {
+	      &quot;max_connections&quot;: 1500,
+        &quot;log_min_duration_statement&quot;: 500
+      },
+      &quot;oc_id&quot;: {
+        &quot;administrators&quot;: [&quot;pinkiepie&quot;, &quot;soarin&quot;]
+      },
+      &quot;opscode_erchef&quot;: {
+	      &quot;depsolver_worker_count&quot;: 4,
+	      &quot;depsolver_timeout&quot;: 120000,
+	      &quot;db_pool_size&quot;: 100
+      },
+      &quot;oc_bifrost&quot;: {
+	      &quot;db_pool_size&quot;: 100
+      },
+      &quot;opscode_certificate&quot;: {
+	      &quot;num_workers&quot;: 4,
+	      &quot;num_certificates_per_worker&quot;: 1000
+      },
+      &quot;oc_chef_authz&quot;: {
+        &quot;http_init_count&quot;: 150,
+        &quot;http_max_count&quot;: 150
+      },
+      &quot;nginx&quot;: {
+        &quot;enable_non_ssl&quot;: true
+      },
+      &quot;license&quot;: {
+        &quot;nodes&quot;: 100000
+      }
+    },
+    &quot;backend_vip&quot;: {
+      &quot;hostname&quot;: &quot;backend.trusty.aws&quot;,
+      &quot;ipaddress&quot;: &quot;33.33.33.8&quot;,
+      &quot;device&quot;: &quot;eth0&quot;,
+      &quot;heartbeat_device&quot;: &quot;eth0&quot;
+    },
+    &quot;analytics_standalones&quot;: {
+      &quot;dp-ub-analytics-standalone1&quot;: {
+        &quot;hostname&quot;: &quot;dp-ub-analytics-standalone1.trusty.aws&quot;,
+        &quot;ebs_optimized&quot;: true,
+        &quot;instance_type&quot;: &quot;m3.xlarge&quot;,
+        &quot;bootstrap&quot;: true
+      }
+    },
+   &quot;frontends&quot;: {
+      &quot;dp-ub-frontend1&quot;: {
+        &quot;hostname&quot;: &quot;dp-ub-frontend1.trusty.aws&quot;,
+        &quot;ebs_optimized&quot;: true,
+        &quot;instance_type&quot;: &quot;m3.xlarge&quot;
+      },
+      &quot;dp-ub-frontend2&quot;: {
+        &quot;hostname&quot;: &quot;dp-ub-frontend2.trusty.aws&quot;,
+        &quot;ebs_optimized&quot;: true,
+        &quot;instance_type&quot;: &quot;m3.xlarge&quot;
+      },
+      &quot;dp-ub-frontend3&quot;: {
+        &quot;hostname&quot;: &quot;dp-ub-frontend3.trusty.aws&quot;,
+        &quot;ebs_optimized&quot;: true,
+        &quot;instance_type&quot;: &quot;m3.xlarge&quot;
+      },
+      &quot;dp-ub-frontend4&quot;: {
+        &quot;hostname&quot;: &quot;dp-ub-frontend4.trusty.aws&quot;,
+        &quot;ebs_optimized&quot;: true,
+        &quot;instance_type&quot;: &quot;m3.xlarge&quot;
+      }
+   },
+   &quot;backends&quot;: {
+      &quot;dp-ub-backend1&quot;: {
+        &quot;hostname&quot;: &quot;dp-ub-backend1.trusty.aws&quot;,
+        &quot;ebs_optimized&quot;: true,
+        &quot;instance_type&quot;: &quot;m3.xlarge&quot;,
+	      &quot;bootstrap&quot;: true
+      },
+      &quot;dp-ub-backend2&quot;: {
+        &quot;hostname&quot;: &quot;dp-ub-backend2.trusty.aws&quot;,
+        &quot;ebs_optimized&quot;: true,
+        &quot;instance_type&quot;: &quot;m3.xlarge&quot;,
+	      &quot;bootstrap&quot;: false
+      }
+    },
+   &quot;loadtesters&quot;: {
+      &quot;loadtester_spec&quot;: {
+        &quot;hostname&quot;: &quot;loadtester1.trusty.aws&quot;,
+        &quot;ebs_optimized&quot;: true,
+        &quot;instance_type&quot;: &quot;m3.2xlarge&quot;
+      }
+    }
+  }
+}
+</code></pre></noscript></div>
+</p>
+]]></content>
+  </entry>
+  
+</feed>
