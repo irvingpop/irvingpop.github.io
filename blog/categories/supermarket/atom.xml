@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Supermarket | Irving's blog]]></title>
   <link href="http://irvingpop.github.io/blog/categories/supermarket/atom.xml" rel="self"/>
   <link href="http://irvingpop.github.io/"/>
-  <updated>2015-04-09T14:23:04-07:00</updated>
+  <updated>2015-04-09T14:25:03-07:00</updated>
   <id>http://irvingpop.github.io/</id>
   <author>
     <name><![CDATA[Irving Popovetsky]]></name>
@@ -117,14 +117,14 @@ kitchen converge default-centos-66 &amp;&amp; kitchen verify default-centos-66
 
 <h2>Troubleshooting &amp; FAQ</h2>
 
-<h3>Common problem: Incorrect redirect URL</h3>
+<h3>Incorrect redirect URL</h3>
 
 <p>The redirect URL specified in oc-id <strong>MUST</strong> match the hostname of the Supermarket server. Also, you must get the URI correct (/auth/chef_oauth2/callback). If these are not true, you will recieve an error message like:
 <code>
 The redirect uri included is not valid.
 </code></p>
 
-<h3>Common problem: Supermarket server cannot reach oc-id, throws 500 error during login</h3>
+<h3>Supermarket server cannot reach oc-id, throws 500 error during login</h3>
 
 <p>The Supermarket server must be able to reach (via https) the specified <code>chef_server_url</code> - it does this during OAuth2 negotation. The most common problems are name resolution and firewall rules.</p>
 

@@ -183,14 +183,14 @@
 
 <h2>Troubleshooting &amp; FAQ</h2>
 
-<h3>Common problem: Incorrect redirect URL</h3>
+<h3>Incorrect redirect URL</h3>
 
 <p>The redirect URL specified in oc-id <strong>MUST</strong> match the hostname of the Supermarket server. Also, you must get the URI correct (/auth/chef_oauth2/callback). If these are not true, you will recieve an error message like:
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'>The redirect uri included is not valid.
 </span></code></pre></td></tr></table></div></figure></p>
 
-<h3>Common problem: Supermarket server cannot reach oc-id, throws 500 error during login</h3>
+<h3>Supermarket server cannot reach oc-id, throws 500 error during login</h3>
 
 <p>The Supermarket server must be able to reach (via https) the specified <code>chef_server_url</code> - it does this during OAuth2 negotation. The most common problems are name resolution and firewall rules.</p>
 
