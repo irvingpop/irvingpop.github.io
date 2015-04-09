@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Supermarket | Irving's blog]]></title>
   <link href="http://irvingpop.github.io/blog/categories/supermarket/atom.xml" rel="self"/>
   <link href="http://irvingpop.github.io/"/>
-  <updated>2015-04-09T14:12:57-07:00</updated>
+  <updated>2015-04-09T14:23:04-07:00</updated>
   <id>http://irvingpop.github.io/</id>
   <author>
     <name><![CDATA[Irving Popovetsky]]></name>
@@ -45,7 +45,7 @@ oc_id['applications'] = {
  "name": "supermarket",
  "uid": "0bad0f2eb04e935718e081fb71e3b7bb47dc3681c81acb9968a8e1e32451d08b",
  "secret": "17cf1141cc971a10ce307611beda7f4dc6633bb54f1bc98d9f9ca76b9b127879",
- "redirect_uri": "https://default-centos-66/auth/chef_oauth2/callback"
+ "redirect_uri": "https://supermarket.mycompany.com/auth/chef_oauth2/callback"
 }
 </code></p></li>
 </ol>
