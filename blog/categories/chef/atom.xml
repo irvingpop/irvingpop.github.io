@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Chef | Irving's blog]]></title>
   <link href="http://irvingpop.github.io/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://irvingpop.github.io/"/>
-  <updated>2015-04-09T11:58:10-07:00</updated>
+  <updated>2015-04-09T14:12:57-07:00</updated>
   <id>http://irvingpop.github.io/</id>
   <author>
     <name><![CDATA[Irving Popovetsky]]></name>
@@ -45,7 +45,7 @@ oc_id['applications'] = {
  "name": "supermarket",
  "uid": "0bad0f2eb04e935718e081fb71e3b7bb47dc3681c81acb9968a8e1e32451d08b",
  "secret": "17cf1141cc971a10ce307611beda7f4dc6633bb54f1bc98d9f9ca76b9b127879",
- "redirect_uri": "https://default-centos-66.vagrantup.com/auth/chef_oauth2/callback"
+ "redirect_uri": "https://default-centos-66/auth/chef_oauth2/callback"
 }
 </code></p></li>
 </ol>
@@ -55,7 +55,7 @@ oc_id['applications'] = {
 
 <p><em>You can add as many oc-id applications as you wish to the chef-server.rb configuration, it will create one file per application</em></p>
 
-<h2>Testing your Private Supermarket server in Test Kitchen</h2>
+<h2>Running your Private Supermarket server in Test Kitchen</h2>
 
 <p><em>Note: We will not use the community Supermarket cookbook, because at this time it installs Supermarket from source.  Instead, we will follow the newer install method which uses an Omnibus package</em></p>
 
@@ -109,9 +109,95 @@ vagrant plugin install vagrant-hostsupdater
 <code>bash
 kitchen converge default-centos-66 &amp;&amp; kitchen verify default-centos-66
 </code></p></li>
-<li><p>Go to your your Supermarket server and log in as a Chef user: <a href="https://default-centos-66.vagrantup.com">https://default-centos-66.vagrantup.com</a></p></li>
+<li><p>Go to your your Supermarket server and log in as a Chef user: <a href="https://default-centos-66">https://default-centos-66</a></p></li>
+<li><p>Upon login, you should see:
+<img class="<a" src="href="https://www.getchef.com/blog/wp-content/uploads/2014/08/oc-id5-1024x343.png">https://www.getchef.com/blog/wp-content/uploads/2014/08/oc-id5-1024x343.png</a>"></p></li>
 </ol>
 
+
+<h2>Troubleshooting &amp; FAQ</h2>
+
+<h3>Common problem: Incorrect redirect URL</h3>
+
+<p>The redirect URL specified in oc-id <strong>MUST</strong> match the hostname of the Supermarket server. Also, you must get the URI correct (/auth/chef_oauth2/callback). If these are not true, you will recieve an error message like:
+<code>
+The redirect uri included is not valid.
+</code></p>
+
+<h3>Common problem: Supermarket server cannot reach oc-id, throws 500 error during login</h3>
+
+<p>The Supermarket server must be able to reach (via https) the specified <code>chef_server_url</code> - it does this during OAuth2 negotation. The most common problems are name resolution and firewall rules.</p>
+
+<h3>How do I enable rails application debug logging?</h3>
+
+<p>There is a known issue with the Supermarket omnibus package that rails messages are not logged. To fix that requires a manual change at the moment. On your supermarket server, edit this file: <code>/opt/supermarket/embedded/service/supermarket/config/environments/production.rb</code>, change line 46 (<code>config.log_level = :warn</code>) to look like:
+<code>ruby
+  config.logger = Logger.new('/var/log/supermarket/rails/rails.log')
+  config.logger.level = 'DEBUG'
+  config.log_level = :debug
+</code></p>
+
+<h3>Contacting packagecloud fails if I&rsquo;m behind a proxy</h3>
+
+<p>No problem!  Add the following to your <code>.kitchenl.local.yml</code> file:</p>
+
+<pre><code class="yaml">---
+provisioner:
+  name: chef_zero
+  solo_rb:
+    http_proxy: http://192.168.1.1
+    https_proxy: http://192.168.2.2
+</code></pre>
+
+<h3>Test kitchen is slow because it has to download/install the Chef Omnibus client package every time</h3>
+
+<p>Here&rsquo;s a few tips to speed it up:</p>
+
+<ol>
+<li>Tell test-kitchen to cache the Omnibus installer (put this in your <code>.kitchen.local.yml</code> file):
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="l-Scalar-Plain">&lt;/ol&gt;</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">&lt;hr /&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">&lt;p&gt;  provisioner</span><span class="p-Indicator">:</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">chef_zero</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">chef_omnibus_install_options</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">-d /tmp/vagrant-cache/vagrant_omnibus</span>
+</span><span class='line'><span class="-Error">  </span><span class="l-Scalar-Plain">&lt;code&gt;</span>
+</span><span class='line'><span class="l-Scalar-Plain">2. Cache yum repos like packagecloud using the vagrant-cachier plugin.  First run `vagrant plugin install vagrant-cachier`, then create a `$VAGRANT_HOME/Vagrantfile` that looks like so</span><span class="p-Indicator">:</span>
+</span><span class='line'> <span class="l-Scalar-Plain">&lt;/code&gt;ruby</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">Vagrant.configure(&amp;ldquo;2&amp;rdquo;) do |config|</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">config.vm.box = &amp;lsquo;some-box&amp;rsquo;</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">if Vagrant.has_plugin?(&amp;ldquo;vagrant-cachier&amp;rdquo;)</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">config.cache.scope = :box</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">config.cache.enable :chef</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">config.cache.enable :apt</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">config.cache.enable :yum</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">config.cache.enable :gem</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">end</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">end</span>
+</span></code></pre></td></tr></table></div></figure> </p>
 ]]></content>
   </entry>
   

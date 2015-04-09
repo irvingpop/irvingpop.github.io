@@ -120,7 +120,7 @@
 </span><span class='line'>  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;supermarket&quot;</span><span class="p">,</span>
 </span><span class='line'>  <span class="nt">&quot;uid&quot;</span><span class="p">:</span> <span class="s2">&quot;0bad0f2eb04e935718e081fb71e3b7bb47dc3681c81acb9968a8e1e32451d08b&quot;</span><span class="p">,</span>
 </span><span class='line'>  <span class="nt">&quot;secret&quot;</span><span class="p">:</span> <span class="s2">&quot;17cf1141cc971a10ce307611beda7f4dc6633bb54f1bc98d9f9ca76b9b127879&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nt">&quot;redirect_uri&quot;</span><span class="p">:</span> <span class="s2">&quot;https://default-centos-66.vagrantup.com/auth/chef_oauth2/callback&quot;</span>
+</span><span class='line'>  <span class="nt">&quot;redirect_uri&quot;</span><span class="p">:</span> <span class="s2">&quot;https://default-centos-66/auth/chef_oauth2/callback&quot;</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure></p></li>
 </ol>
@@ -130,7 +130,7 @@
 
 <p><em>You can add as many oc-id applications as you wish to the chef-server.rb configuration, it will create one file per application</em></p>
 
-<h2>Testing your Private Supermarket server in Test Kitchen</h2>
+<h2>Running your Private Supermarket server in Test Kitchen</h2>
 
 <p><em>Note: We will not use the community Supermarket cookbook, because at this time it installs Supermarket from source.  Instead, we will follow the newer install method which uses an Omnibus package</em></p>
 
@@ -175,7 +175,90 @@
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'>kitchen converge default-centos-66 <span class="o">&amp;&amp;</span> kitchen verify default-centos-66
 </span></code></pre></td></tr></table></div></figure></p></li>
-<li><p>Go to your your Supermarket server and log in as a Chef user: <a href="https://default-centos-66.vagrantup.com">https://default-centos-66.vagrantup.com</a></p></li>
+<li><p>Go to your your Supermarket server and log in as a Chef user: <a href="https://default-centos-66">https://default-centos-66</a></p></li>
+<li><p>Upon login, you should see:
+<img src="https://www.getchef.com/blog/wp-content/uploads/2014/08/oc-id5-1024x343.png"></p></li>
+</ol>
+
+
+<h2>Troubleshooting &amp; FAQ</h2>
+
+<h3>Common problem: Incorrect redirect URL</h3>
+
+<p>The redirect URL specified in oc-id <strong>MUST</strong> match the hostname of the Supermarket server. Also, you must get the URI correct (/auth/chef_oauth2/callback). If these are not true, you will recieve an error message like:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>The redirect uri included is not valid.
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h3>Common problem: Supermarket server cannot reach oc-id, throws 500 error during login</h3>
+
+<p>The Supermarket server must be able to reach (via https) the specified <code>chef_server_url</code> - it does this during OAuth2 negotation. The most common problems are name resolution and firewall rules.</p>
+
+<h3>How do I enable rails application debug logging?</h3>
+
+<p>There is a known issue with the Supermarket omnibus package that rails messages are not logged. To fix that requires a manual change at the moment. On your supermarket server, edit this file: <code>/opt/supermarket/embedded/service/supermarket/config/environments/production.rb</code>, change line 46 (<code>config.log_level = :warn</code>) to look like:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="no">Logger</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;/var/log/supermarket/rails/rails.log&#39;</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="s1">&#39;DEBUG&#39;</span>
+</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">log_level</span> <span class="o">=</span> <span class="ss">:debug</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h3>Contacting packagecloud fails if I&rsquo;m behind a proxy</h3>
+
+<p>No problem!  Add the following to your <code>.kitchenl.local.yml</code> file:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="nn">---</span>
+</span><span class='line'><span class="l-Scalar-Plain">provisioner</span><span class="p-Indicator">:</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">chef_zero</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">solo_rb</span><span class="p-Indicator">:</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">http_proxy</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http://192.168.1.1</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">https_proxy</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http://192.168.2.2</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h3>Test kitchen is slow because it has to download/install the Chef Omnibus client package every time</h3>
+
+<p>Here&rsquo;s a few tips to speed it up:</p>
+
+<ol>
+<li>Tell test-kitchen to cache the Omnibus installer (put this in your <code>.kitchen.local.yml</code> file):
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="nn">---</span>
+</span><span class='line'><span class="l-Scalar-Plain">provisioner</span><span class="p-Indicator">:</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">chef_zero</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">chef_omnibus_install_options</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">-d /tmp/vagrant-cache/vagrant_omnibus</span>
+</span></code></pre></td></tr></table></div></figure></li>
+<li>Cache yum repos like packagecloud using the vagrant-cachier plugin.  First run <code>vagrant plugin install vagrant-cachier</code>, then create a <code>$VAGRANT_HOME/Vagrantfile</code> that looks like so:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="s2">&quot;2&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s1">&#39;some-box&#39;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="no">Vagrant</span><span class="o">.</span><span class="n">has_plugin?</span><span class="p">(</span><span class="s2">&quot;vagrant-cachier&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">config</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="ss">:box</span>
+</span><span class='line'>    <span class="n">config</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">enable</span> <span class="ss">:chef</span>
+</span><span class='line'>    <span class="n">config</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">enable</span> <span class="ss">:apt</span>
+</span><span class='line'>    <span class="n">config</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">enable</span> <span class="ss">:yum</span>
+</span><span class='line'>    <span class="n">config</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">enable</span> <span class="ss">:gem</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></li>
 </ol>
 
 </div>
