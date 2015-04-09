@@ -20,7 +20,7 @@ module OctopressFilters
       page.output = TemplateWrapper::unwrap(page.output)
     end
 
-    page.output = RubyPants.new(page.output).to_html
+    page.output = BacktickCodeBlock::postprocess_code_blocks(page.output)
   end
 
   class PageFilters < Octopress::Hooks::Page
