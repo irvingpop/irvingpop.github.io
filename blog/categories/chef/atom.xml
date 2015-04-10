@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Chef | Irving's blog]]></title>
   <link href="http://irvingpop.github.io/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://irvingpop.github.io/"/>
-  <updated>2015-04-09T17:25:32-07:00</updated>
+  <updated>2015-04-09T17:28:01-07:00</updated>
   <id>http://irvingpop.github.io/</id>
   <author>
     <name><![CDATA[Irving Popovetsky]]></name>
@@ -18,7 +18,7 @@
     <link href="http://irvingpop.github.io/blog/2015/04/07/setting-up-your-private-supermarket-server/"/>
     <updated>2015-04-07T15:48:34-07:00</updated>
     <id>http://irvingpop.github.io/blog/2015/04/07/setting-up-your-private-supermarket-server</id>
-    <content type="html"><![CDATA[<p><em>Note: this is an updated version of the previous post from August, 2014: <a href="https://www.chef.io/blog/2014/08/29/getting-started-with-oc-id-and-supermarket/">Getting started with oc-id and Supermarket</a></em></p>
+    <content type="html"><![CDATA[<p><em>This is an updated version of the previous post from August, 2014: <a href="https://www.chef.io/blog/2014/08/29/getting-started-with-oc-id-and-supermarket/">Getting started with oc-id and Supermarket</a></em></p>
 
 <p>Chef Server 12 includes <a href="https://github.com/chef/oc-id">oc-id</a>, the OAuth2 service that powers <a href="https://id.chef.io/">id.chef.io</a>.  After upgrading to this release, Chef customers can now run their own Supermarket service behind a firewall.</p>
 
@@ -27,7 +27,7 @@
 
 <h2>oc-id setup on your Chef Server:</h2>
 
-<p><em>NOTE: You must be logged in to your Chef server via ssh and elevated to an admin user level for these steps</em></p>
+<p><em>You must be logged in to your Chef server via ssh and elevated to an admin user level for the following steps</em></p>
 
 <ol>
 <li><p>Add the following setting to your <code>/etc/opscode/chef-server.rb</code> configuration file:
