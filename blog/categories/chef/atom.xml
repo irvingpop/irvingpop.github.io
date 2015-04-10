@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Chef | Irving's blog]]></title>
   <link href="http://irvingpop.github.io/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://irvingpop.github.io/"/>
-  <updated>2015-04-09T14:25:03-07:00</updated>
+  <updated>2015-04-09T17:25:32-07:00</updated>
   <id>http://irvingpop.github.io/</id>
   <author>
     <name><![CDATA[Irving Popovetsky]]></name>
@@ -57,7 +57,7 @@ oc_id['applications'] = {
 
 <h2>Running your Private Supermarket server in Test Kitchen</h2>
 
-<p><em>Note: We will not use the community Supermarket cookbook, because at this time it installs Supermarket from source.  Instead, we will follow the newer install method which uses an Omnibus package</em></p>
+<p><em>Note: We will not use the community Supermarket cookbook, because at this time it installs Supermarket from source.  Instead, we will us an Omnibus package to install</em></p>
 
 <p>In the spirit of &ldquo;code as documentation&rdquo; I&rsquo;ve provided a simple cookbook and test-kitchen configuration for testing Supermarket Omnibus packages. These packages are downloaded from <a href="https://packagecloud.io/chef/stable">https://packagecloud.io/chef/stable</a></p>
 
@@ -136,6 +136,9 @@ The redirect uri included is not valid.
   config.logger.level = 'DEBUG'
   config.log_level = :debug
 </code></p>
+
+<p>Then restart the rails service by running
+<code>supermarket-ctl restart rails</code></p>
 
 <h3>Contacting packagecloud fails if I&rsquo;m behind a proxy</h3>
 

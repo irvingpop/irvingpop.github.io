@@ -132,7 +132,7 @@
 
 <h2>Running your Private Supermarket server in Test Kitchen</h2>
 
-<p><em>Note: We will not use the community Supermarket cookbook, because at this time it installs Supermarket from source.  Instead, we will follow the newer install method which uses an Omnibus package</em></p>
+<p><em>Note: We will not use the community Supermarket cookbook, because at this time it installs Supermarket from source.  Instead, we will us an Omnibus package to install</em></p>
 
 <p>In the spirit of &ldquo;code as documentation&rdquo; I&rsquo;ve provided a simple cookbook and test-kitchen configuration for testing Supermarket Omnibus packages. These packages are downloaded from <a href="https://packagecloud.io/chef/stable">https://packagecloud.io/chef/stable</a></p>
 
@@ -204,6 +204,9 @@
 </span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="s1">&#39;DEBUG&#39;</span>
 </span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">log_level</span> <span class="o">=</span> <span class="ss">:debug</span>
 </span></code></pre></td></tr></table></div></figure></p>
+
+<p>Then restart the rails service by running
+<code>supermarket-ctl restart rails</code></p>
 
 <h3>Contacting packagecloud fails if I&rsquo;m behind a proxy</h3>
 
