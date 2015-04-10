@@ -91,6 +91,13 @@ The redirect uri included is not valid.
 ### Supermarket server cannot reach oc-id, throws 500 error during login
 The Supermarket server must be able to reach (via https) the specified `chef_server_url` - it does this during OAuth2 negotation. The most common problems are name resolution and firewall rules.
 
+### Where can I find the code to Supermarket?
+* Supermarket the rails application is [located here](https://github.com/chef/supermarket)
+  * All Supermarket [issues should be reported there](https://github.com/chef/supermarket/issues)
+* The code which builds Supermarket into an Omnibus package is [located here](https://github.com/chef/omnibus-supermarket)
+  * The cookbook that is run when during `supermarket-ctl reconfigure` is [located within this repo](https://github.com/chef/omnibus-supermarket/tree/master/cookbooks/omnibus-supermarket)
+  * You can build your own Omnibus packages by following [the instructions in the README.md](https://github.com/chef/omnibus-supermarket#kitchen-based-build-environment)
+
 ### How do I enable rails application debug logging?
 There is a known issue with the Supermarket omnibus package that rails messages are not logged. To fix that requires a manual change at the moment. On your supermarket server, edit this file: `/opt/supermarket/embedded/service/supermarket/config/environments/production.rb`, change line 46 (`config.log_level = :warn`) to look like:
 ```ruby
