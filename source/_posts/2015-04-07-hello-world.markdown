@@ -18,6 +18,8 @@ end
 
 {% img http://replygif.net/i/1463.gif %}
 
+<!-- more -->
+
 ```ruby
 def blah
   puts 'woohoo'
