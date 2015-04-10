@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Test | Irving's blog]]></title>
   <link href="http://irvingpop.github.io/blog/categories/test/atom.xml" rel="self"/>
   <link href="http://irvingpop.github.io/"/>
-  <updated>2015-04-10T09:40:41-07:00</updated>
+  <updated>2015-04-10T09:51:34-07:00</updated>
   <id>http://irvingpop.github.io/</id>
   <author>
     <name><![CDATA[Irving Popovetsky]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Hello World]]></title>
-    <link href="http://irvingpop.github.io/blog/2015/04/07/hello-world/"/>
-    <updated>2015-04-07T10:52:17-07:00</updated>
-    <id>http://irvingpop.github.io/blog/2015/04/07/hello-world</id>
+    <link href="http://irvingpop.github.io/blog/2015/01/01/hello-world/"/>
+    <updated>2015-01-01T09:52:17-08:00</updated>
+    <id>http://irvingpop.github.io/blog/2015/01/01/hello-world</id>
     <content type="html"><![CDATA[<h1>Hello, World!</h1>
 
 <p>Daisy, Daisy, etc etc.</p>

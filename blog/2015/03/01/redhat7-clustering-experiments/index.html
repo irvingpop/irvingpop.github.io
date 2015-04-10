@@ -1,231 +1,90 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Irving's blog]]></title>
-  <link href="http://irvingpop.github.io/atom.xml" rel="self"/>
-  <link href="http://irvingpop.github.io/"/>
-  <updated>2015-04-10T09:51:34-07:00</updated>
-  <id>http://irvingpop.github.io/</id>
-  <author>
-    <name><![CDATA[Irving Popovetsky]]></name>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Experimenting With Redhat Cluster Suite Version 7 - Irving's blog</title>
+  <meta name="author" content="Irving Popovetsky">
+
+  
+  <meta name="description" content="Description Source code at: https://github.com/irvingpop/rhcs7 I created a Vagrant-based configuration that brings up two CentOS 7 nodes that share a &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://irvingpop.github.io/blog/2015/03/01/redhat7-clustering-experiments/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Irving's blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Irving's blog</a></h1>
+  
+    <h2>The trials and tribulations of computering</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="irvingpop.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
     
-  </author>
-  <generator uri="http://octopress.org/">Octopress</generator>
-
-  
-  <entry>
-    <title type="html"><![CDATA[Setting Up Your Private Supermarket Server]]></title>
-    <link href="http://irvingpop.github.io/blog/2015/04/07/setting-up-your-private-supermarket-server/"/>
-    <updated>2015-04-07T15:48:34-07:00</updated>
-    <id>http://irvingpop.github.io/blog/2015/04/07/setting-up-your-private-supermarket-server</id>
-    <content type="html"><![CDATA[<p><em>This is an updated version of the previous post from August, 2014: <a href="https://www.chef.io/blog/2014/08/29/getting-started-with-oc-id-and-supermarket/">Getting started with oc-id and Supermarket</a></em></p>
-
-<p>Chef Server 12 includes <a href="https://github.com/chef/oc-id">oc-id</a>, the OAuth2 service that powers <a href="https://id.chef.io/">id.chef.io</a>.  After upgrading to this release, Chef customers can now run their own Supermarket service behind a firewall.</p>
-
-<!-- more -->
+      <h1 class="entry-title">Experimenting With Redhat Cluster Suite Version 7</h1>
+    
+    
+      <p class="meta">
+        
 
 
-<h2>oc-id setup on your Chef Server:</h2>
-
-<p><em>You must be logged in to your Chef server via ssh and elevated to an admin user level for the following steps</em></p>
-
-<ol>
-<li><p>Add the following setting to your <code>/etc/opscode/chef-server.rb</code> configuration file:
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">oc_id</span><span class="o">[</span><span class="s1">&#39;applications&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>  <span class="s1">&#39;supermarket&#39;</span> <span class="o">=&gt;</span> <span class="p">{</span>
-</span><span class='line'>    <span class="s1">&#39;redirect_uri&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;https://supermarket.mycompany.com/auth/chef_oauth2/callback&#39;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p></li>
-<li><p>run <code>chef-server-ctl reconfigure</code></p></li>
-<li><p>After the reconfigure, you will find the OAuth2 data in <code>/etc/opscode/oc-id-applications/supermarket.json</code>
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;supermarket&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nt">&quot;uid&quot;</span><span class="p">:</span> <span class="s2">&quot;0bad0f2eb04e935718e081fb71e3b7bb47dc3681c81acb9968a8e1e32451d08b&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nt">&quot;secret&quot;</span><span class="p">:</span> <span class="s2">&quot;17cf1141cc971a10ce307611beda7f4dc6633bb54f1bc98d9f9ca76b9b127879&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nt">&quot;redirect_uri&quot;</span><span class="p">:</span> <span class="s2">&quot;https://supermarket.mycompany.com/auth/chef_oauth2/callback&quot;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p></li>
-</ol>
 
 
-<p>Note the <code>uid</code> and <code>secret</code> values from this file, you will need them for the next stage.</p>
-
-<p><em>You can add as many oc-id applications as you wish to the chef-server.rb configuration, it will create one file per application</em></p>
-
-<h2>Running your Private Supermarket server in Test Kitchen</h2>
-
-<p><em>Note: We will not use the community Supermarket cookbook, because at this time it installs Supermarket from source.  Instead, we will us an Omnibus package to install</em></p>
-
-<p>In the spirit of &ldquo;code as documentation&rdquo; I&rsquo;ve provided a simple cookbook and test-kitchen configuration for testing Supermarket Omnibus packages. These packages are downloaded from <a href="https://packagecloud.io/chef/stable">https://packagecloud.io/chef/stable</a></p>
-
-<ol>
-<li><p>Download a copy of the <code>supermarket-omnibus-cookbook</code>
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>git clone https://github.com/irvingpop/supermarket-omnibus-cookbook.git supermarket-omnibus-cookbook
-</span><span class='line'><span class="nb">cd </span>supermarket-omnibus-cookbook
-</span></code></pre></td></tr></table></div></figure></p></li>
-<li><p>Create a <code>.kitchen.local.yml</code> file, to set your oc-id attributes (as captured in step 3 above)
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="nn">---</span>
-</span><span class='line'><span class="l-Scalar-Plain">suites</span><span class="p-Indicator">:</span>
-</span><span class='line'>  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">default</span>
-</span><span class='line'>    <span class="l-Scalar-Plain">run_list</span><span class="p-Indicator">:</span>
-</span><span class='line'>      <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">recipe[supermarket-omnibus-cookbook::default]</span>
-</span><span class='line'>    <span class="l-Scalar-Plain">attributes</span><span class="p-Indicator">:</span>
-</span><span class='line'>      <span class="l-Scalar-Plain">supermarket_omnibus</span><span class="p-Indicator">:</span>
-</span><span class='line'>        <span class="l-Scalar-Plain">chef_server_url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://chefserver.mycompany.com</span>
-</span><span class='line'>        <span class="l-Scalar-Plain">chef_oauth2_app_id</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0bad0f2eb04e935718e081fb71e3b7bb47dc3681c81acb9968a8e1e32451d08b</span>
-</span><span class='line'>        <span class="l-Scalar-Plain">chef_oauth2_secret</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">17cf1141cc971a10ce307611beda7f4dc6633bb54f1bc98d9f9ca76b9b127879</span>
-</span><span class='line'>        <span class="l-Scalar-Plain">chef_oauth2_verify_ssl</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
-</span></code></pre></td></tr></table></div></figure></p></li>
-<li><p>Install the <code>vagrant-hostsupdater</code> plugin, this will automatically add the names of your machines to your /etc/hosts file. This is important for oauth2, which cares about host names. The <code>redirect_uri</code> value you entered in to your oc-id configuration reflects this name.
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>vagrant plugin install vagrant-hostsupdater
-</span></code></pre></td></tr></table></div></figure></p></li>
-<li><p>Start your Supermarket instance and test it
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>kitchen converge default-centos-66 <span class="o">&amp;&amp;</span> kitchen verify default-centos-66
-</span></code></pre></td></tr></table></div></figure></p></li>
-<li><p>Go to your your Supermarket server and log in as a Chef user: <a href="https://default-centos-66">https://default-centos-66</a></p></li>
-<li><p>Upon login, you should see:
-<img src="https://www.getchef.com/blog/wp-content/uploads/2014/08/oc-id5-1024x343.png"></p></li>
-</ol>
+<time class='entry-date' datetime='2015-03-01T14:48:34-08:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>1</span><span class='date-suffix'>st</span>, <span class='date-year'>2015</span></span> <span class='time'>2:48 pm</span></time>
+        
+      </p>
+    
+  </header>
 
 
-<h2>Troubleshooting &amp; FAQ</h2>
-
-<h3>Incorrect redirect URL</h3>
-
-<p>The redirect URL specified in oc-id <strong>MUST</strong> match the hostname of the Supermarket server. Also, you must get the URI correct (/auth/chef_oauth2/callback). If these are not true, you will recieve an error message like:
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>The redirect uri included is not valid.
-</span></code></pre></td></tr></table></div></figure></p>
-
-<h3>Supermarket server cannot reach oc-id, throws 500 error during login</h3>
-
-<p>The Supermarket server must be able to reach (via https) the specified <code>chef_server_url</code> - it does this during OAuth2 negotation. The most common problems are name resolution and firewall rules.</p>
-
-<h3>Where can I find the code to Supermarket?</h3>
-
-<ul>
-<li>Supermarket the rails application is <a href="https://github.com/chef/supermarket">located here</a>
-
-<ul>
-<li>All Supermarket <a href="https://github.com/chef/supermarket/issues">issues should be reported there</a></li>
-</ul>
-</li>
-<li>The code which builds Supermarket into an Omnibus package is <a href="https://github.com/chef/omnibus-supermarket">located here</a>
-
-<ul>
-<li>The cookbook that is run when during <code>supermarket-ctl reconfigure</code> is <a href="https://github.com/chef/omnibus-supermarket/tree/master/cookbooks/omnibus-supermarket">located within this repo</a></li>
-<li>You can build your own Omnibus packages by following <a href="https://github.com/chef/omnibus-supermarket#kitchen-based-build-environment">the instructions in the README.md</a></li>
-</ul>
-</li>
-</ul>
-
-
-<h3>How do I enable rails application debug logging?</h3>
-
-<p>There is a known issue with the Supermarket omnibus package that rails messages are not logged. To fix that requires a manual change at the moment. On your supermarket server, edit this file: <code>/opt/supermarket/embedded/service/supermarket/config/environments/production.rb</code>, change line 46 (<code>config.log_level = :warn</code>) to look like:
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="no">Logger</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;/var/log/supermarket/rails/rails.log&#39;</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="s1">&#39;DEBUG&#39;</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">log_level</span> <span class="o">=</span> <span class="ss">:debug</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p>Then restart the rails service by running
-<code>supermarket-ctl restart rails</code></p>
-
-<h3>Contacting packagecloud fails if I&rsquo;m behind a proxy</h3>
-
-<p>No problem!  Add the following to your <code>.kitchenl.local.yml</code> file:
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="nn">---</span>
-</span><span class='line'><span class="l-Scalar-Plain">provisioner</span><span class="p-Indicator">:</span>
-</span><span class='line'>  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">chef_zero</span>
-</span><span class='line'>  <span class="l-Scalar-Plain">solo_rb</span><span class="p-Indicator">:</span>
-</span><span class='line'>    <span class="l-Scalar-Plain">http_proxy</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http://192.168.1.1</span>
-</span><span class='line'>    <span class="l-Scalar-Plain">https_proxy</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http://192.168.2.2</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<h3>Test kitchen is slow because it has to download/install the Chef Omnibus client package every time</h3>
-
-<p>Here&rsquo;s a few tips to speed it up:</p>
-
-<ol>
-<li>Tell test-kitchen to cache the Omnibus installer (put this in your <code>.kitchen.local.yml</code> file):
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="nn">---</span>
-</span><span class='line'><span class="l-Scalar-Plain">provisioner</span><span class="p-Indicator">:</span>
-</span><span class='line'>  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">chef_zero</span>
-</span><span class='line'>  <span class="l-Scalar-Plain">chef_omnibus_install_options</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">-d /tmp/vagrant-cache/vagrant_omnibus</span>
-</span></code></pre></td></tr></table></div></figure></li>
-<li>Cache yum repos like packagecloud using the vagrant-cachier plugin.  First run <code>vagrant plugin install vagrant-cachier</code>, then create a <code>$VAGRANT_HOME/Vagrantfile</code> that looks like so:
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="s2">&quot;2&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s1">&#39;some-box&#39;</span>
-</span><span class='line'>  <span class="k">if</span> <span class="no">Vagrant</span><span class="o">.</span><span class="n">has_plugin?</span><span class="p">(</span><span class="s2">&quot;vagrant-cachier&quot;</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">config</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="ss">:box</span>
-</span><span class='line'>    <span class="n">config</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">enable</span> <span class="ss">:chef</span>
-</span><span class='line'>    <span class="n">config</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">enable</span> <span class="ss">:apt</span>
-</span><span class='line'>    <span class="n">config</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">enable</span> <span class="ss">:yum</span>
-</span><span class='line'>    <span class="n">config</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">enable</span> <span class="ss">:gem</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure></li>
-</ol>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Experimenting With Redhat Cluster Suite Version 7]]></title>
-    <link href="http://irvingpop.github.io/blog/2015/03/01/redhat7-clustering-experiments/"/>
-    <updated>2015-03-01T14:48:34-08:00</updated>
-    <id>http://irvingpop.github.io/blog/2015/03/01/redhat7-clustering-experiments</id>
-    <content type="html"><![CDATA[<h2>Description</h2>
+<div class="entry-content"><h2>Description</h2>
 
 <p>Source code at: <a href="https://github.com/irvingpop/rhcs7">https://github.com/irvingpop/rhcs7</a></p>
 
@@ -1033,164 +892,153 @@ from: <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_
 </span></code></pre></td></tr></table></div></figure></p>
 
 <p>TBD</p>
-]]></content>
-  </entry>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
   
-  <entry>
-    <title type="html"><![CDATA[Hello World]]></title>
-    <link href="http://irvingpop.github.io/blog/2015/01/01/hello-world/"/>
-    <updated>2015-01-01T09:52:17-08:00</updated>
-    <id>http://irvingpop.github.io/blog/2015/01/01/hello-world</id>
-    <content type="html"><![CDATA[<h1>Hello, World!</h1>
 
-<p>Daisy, Daisy, etc etc.</p>
+<span class="byline author vcard">Posted by <span class="fn">Irving Popovetsky</span></span>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">foo</span>
-  <span class="nb">puts</span> <span class="s1">&#39;wat&#39;</span>
-<span class="k">end</span></code></pre></div>
-
-
-<p><img src="http://replygif.net/i/1463.gif"></p>
-
-<!-- more -->
-
-
-<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">blah</span>
-</span><span class='line'>  <span class="nb">puts</span> <span class="s1">&#39;woohoo&#39;</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p>github gist:</p>
-
-<div><script src='https://gist.github.com/3aee2f63a8fa7ac41f0a.js'></script>
-<noscript><pre><code>{
-  &quot;provider&quot;: &quot;ec2&quot;,
-  &quot;ec2_options&quot;: {
-    &quot;region&quot;: &quot;us-west-2&quot;,
-    &quot;vpc_subnet&quot;: &quot;subnet-b2bb82f4&quot;,
-    &quot;ami_id&quot;: &quot;ami-3d50120d&quot;,
-    &quot;ssh_username&quot;: &quot;ubuntu&quot;,
-    &quot;backend_storage_type&quot;: &quot;drbd&quot;,
-    &quot;ebs_disk_size&quot;: &quot;100&quot;,
-    &quot;use_private_ip_for_ssh&quot;: false,
-    &quot;elb&quot;: true
-  },
-  &quot;default_package&quot;:   &quot;https://web-dl.packagecloud.io/chef/stable/packages/ubuntu/trusty/chef-server-core_12.0.1-1_amd64.deb&quot;,
-  &quot;manage_package&quot;:    &quot;https://web-dl.packagecloud.io/chef/stable/packages/ubuntu/precise/opscode-manage_1.6.2-1_amd64.deb&quot;,
-  &quot;reporting_package&quot;: &quot;https://web-dl.packagecloud.io/chef/stable/packages/ubuntu/precise/opscode-reporting_1.2.2-1_amd64.deb&quot;,
-  &quot;analytics_package&quot;: &quot;https://opscode-analytics-packages.s3.amazonaws.com/1.1.0-rc.4/ubuntu/14.04/x86_64/opscode-analytics_1.1.0-rc.4-1_amd64.deb?AWSAccessKeyId=AKIAI4DC2RTKK4T2T7JQ&amp;Expires=1419461962&amp;Signature=zvtEZJp6NVBqCOPAE%2BWtl6%2BN0L4%3D&quot;,
-  &quot;apply_ec_bugfixes&quot;: false,
-  &quot;lemme_doit&quot;: false,
-  &quot;loadtesters&quot;: {
-    &quot;num_loadtesters&quot;: 50,
-    &quot;num_groups&quot;: 5,
-    &quot;num_containers&quot;: 800
-  },
-  &quot;packages&quot;: {
-  },
-  &quot;layout&quot;: {
-    &quot;topology&quot;: &quot;ha&quot;,
-    &quot;api_fqdn&quot;: &quot;api.trusty.aws&quot;,
-    &quot;manage_fqdn&quot;: &quot;manage.trusty.aws&quot;,
-    &quot;analytics_fqdn&quot;: &quot;analytics.trusty.aws&quot;,
-    &quot;configuration&quot;: {
-      &quot;postgresql&quot;: {
-          &quot;max_connections&quot;: 1500,
-        &quot;log_min_duration_statement&quot;: 500
-      },
-      &quot;oc_id&quot;: {
-        &quot;administrators&quot;: [&quot;pinkiepie&quot;, &quot;soarin&quot;]
-      },
-      &quot;opscode_erchef&quot;: {
-          &quot;depsolver_worker_count&quot;: 4,
-          &quot;depsolver_timeout&quot;: 120000,
-          &quot;db_pool_size&quot;: 100
-      },
-      &quot;oc_bifrost&quot;: {
-          &quot;db_pool_size&quot;: 100
-      },
-      &quot;opscode_certificate&quot;: {
-          &quot;num_workers&quot;: 4,
-          &quot;num_certificates_per_worker&quot;: 1000
-      },
-      &quot;oc_chef_authz&quot;: {
-        &quot;http_init_count&quot;: 150,
-        &quot;http_max_count&quot;: 150
-      },
-      &quot;nginx&quot;: {
-        &quot;enable_non_ssl&quot;: true
-      },
-      &quot;license&quot;: {
-        &quot;nodes&quot;: 100000
-      }
-    },
-    &quot;backend_vip&quot;: {
-      &quot;hostname&quot;: &quot;backend.trusty.aws&quot;,
-      &quot;ipaddress&quot;: &quot;33.33.33.8&quot;,
-      &quot;device&quot;: &quot;eth0&quot;,
-      &quot;heartbeat_device&quot;: &quot;eth0&quot;
-    },
-    &quot;analytics_standalones&quot;: {
-      &quot;dp-ub-analytics-standalone1&quot;: {
-        &quot;hostname&quot;: &quot;dp-ub-analytics-standalone1.trusty.aws&quot;,
-        &quot;ebs_optimized&quot;: true,
-        &quot;instance_type&quot;: &quot;m3.xlarge&quot;,
-        &quot;bootstrap&quot;: true
-      }
-    },
-   &quot;frontends&quot;: {
-      &quot;dp-ub-frontend1&quot;: {
-        &quot;hostname&quot;: &quot;dp-ub-frontend1.trusty.aws&quot;,
-        &quot;ebs_optimized&quot;: true,
-        &quot;instance_type&quot;: &quot;m3.xlarge&quot;
-      },
-      &quot;dp-ub-frontend2&quot;: {
-        &quot;hostname&quot;: &quot;dp-ub-frontend2.trusty.aws&quot;,
-        &quot;ebs_optimized&quot;: true,
-        &quot;instance_type&quot;: &quot;m3.xlarge&quot;
-      },
-      &quot;dp-ub-frontend3&quot;: {
-        &quot;hostname&quot;: &quot;dp-ub-frontend3.trusty.aws&quot;,
-        &quot;ebs_optimized&quot;: true,
-        &quot;instance_type&quot;: &quot;m3.xlarge&quot;
-      },
-      &quot;dp-ub-frontend4&quot;: {
-        &quot;hostname&quot;: &quot;dp-ub-frontend4.trusty.aws&quot;,
-        &quot;ebs_optimized&quot;: true,
-        &quot;instance_type&quot;: &quot;m3.xlarge&quot;
-      }
-   },
-   &quot;backends&quot;: {
-      &quot;dp-ub-backend1&quot;: {
-        &quot;hostname&quot;: &quot;dp-ub-backend1.trusty.aws&quot;,
-        &quot;ebs_optimized&quot;: true,
-        &quot;instance_type&quot;: &quot;m3.xlarge&quot;,
-          &quot;bootstrap&quot;: true
-      },
-      &quot;dp-ub-backend2&quot;: {
-        &quot;hostname&quot;: &quot;dp-ub-backend2.trusty.aws&quot;,
-        &quot;ebs_optimized&quot;: true,
-        &quot;instance_type&quot;: &quot;m3.xlarge&quot;,
-          &quot;bootstrap&quot;: false
-      }
-    },
-   &quot;loadtesters&quot;: {
-      &quot;loadtester_spec&quot;: {
-        &quot;hostname&quot;: &quot;loadtester1.trusty.aws&quot;,
-        &quot;ebs_optimized&quot;: true,
-        &quot;instance_type&quot;: &quot;m3.2xlarge&quot;
-      }
-    }
-  }
-}
-</code></pre></noscript></div>
+      
 
 
 
-]]></content>
-  </entry>
+
+<time class='entry-date' datetime='2015-03-01T14:48:34-08:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>1</span><span class='date-suffix'>st</span>, <span class='date-year'>2015</span></span> <span class='time'>2:48 pm</span></time>
+      
+
+<span class="categories">
   
-</feed>
+    <a class='category' href='/blog/categories/chef/'>chef</a>, <a class='category' href='/blog/categories/clustering/'>clustering</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://irvingpop.github.io/blog/2015/03/01/redhat7-clustering-experiments/" data-via="irvingpop" data-counturl="http://irvingpop.github.io/blog/2015/03/01/redhat7-clustering-experiments/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/01/01/hello-world/" title="Previous Post: Hello World">&laquo; Hello World</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/04/07/setting-up-your-private-supermarket-server/" title="Next Post: Setting Up Your Private Supermarket Server">Setting Up Your Private Supermarket Server &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/04/07/setting-up-your-private-supermarket-server/">Setting Up Your Private Supermarket Server</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/01/redhat7-clustering-experiments/">Experimenting With Redhat Cluster Suite Version 7</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/01/hello-world/">Hello World</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/irvingpop">@irvingpop</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'irvingpop',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Irving Popovetsky -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
