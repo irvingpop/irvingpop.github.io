@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Supermarket | Irving's blog]]></title>
   <link href="http://irvingpop.github.io/blog/categories/supermarket/atom.xml" rel="self"/>
   <link href="http://irvingpop.github.io/"/>
-  <updated>2015-04-20T13:44:46-07:00</updated>
+  <updated>2015-04-20T14:07:32-07:00</updated>
   <id>http://irvingpop.github.io/</id>
   <author>
     <name><![CDATA[Irving Popovetsky]]></name>
@@ -142,11 +142,11 @@ knife supermarket share mycookbook "Other"
 
 <p>Supermarket is still in early stages and does not have official Support from Chef, HA, backup tools, etc.  Although several of our key customers are running Supermarket in prod, they are doing it at their own risk.</p>
 
-<p>In general we recommend that you start small.</p>
+<p>In general we recommend that you start using small VMs, it&rsquo;s easy to increase your VM size as you need it. Put your <code>/var/opt/supermarket</code> directory on a separate disk and use LVM so that it can be expanded.</p>
 
 <h3>Your Wrapper Cookbook attributes</h3>
 
-<p>It is recommended that use use a wrapper cookbook with role recipes to deploy Supermarket.</p>
+<p>We recommend that you use use a wrapper cookbook with role recipes to deploy Supermarket.</p>
 
 <p>All of the keys under <code>node['supermarket_omnibus']</code> are written out as <code>/etc/supermarket/supermarket.json</code>.  You can add others as you see fit to override the defaults specified in the <a href="https://github.com/chef/omnibus-supermarket/blob/master/cookbooks/omnibus-supermarket/attributes/default.rb">supermarket Omnibus package</a>
 <code>ruby

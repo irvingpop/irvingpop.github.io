@@ -209,11 +209,11 @@
 
 <p>Supermarket is still in early stages and does not have official Support from Chef, HA, backup tools, etc.  Although several of our key customers are running Supermarket in prod, they are doing it at their own risk.</p>
 
-<p>In general we recommend that you start small.</p>
+<p>In general we recommend that you start using small VMs, it&rsquo;s easy to increase your VM size as you need it. Put your <code>/var/opt/supermarket</code> directory on a separate disk and use LVM so that it can be expanded.</p>
 
 <h3>Your Wrapper Cookbook attributes</h3>
 
-<p>It is recommended that use use a wrapper cookbook with role recipes to deploy Supermarket.</p>
+<p>We recommend that you use use a wrapper cookbook with role recipes to deploy Supermarket.</p>
 
 <p>All of the keys under <code>node['supermarket_omnibus']</code> are written out as <code>/etc/supermarket/supermarket.json</code>.  You can add others as you see fit to override the defaults specified in the <a href="https://github.com/chef/omnibus-supermarket/blob/master/cookbooks/omnibus-supermarket/attributes/default.rb">supermarket Omnibus package</a>
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -382,6 +382,8 @@
         <a class="basic-alignment left" href="/blog/2015/03/01/redhat7-clustering-experiments/" title="Previous Post: Experimenting with Redhat Cluster Suite 7">&laquo; Experimenting with Redhat Cluster Suite 7</a>
       
       
+        <a class="basic-alignment right" href="/blog/2015/04/20/tuning-the-chef-server-for-scale/" title="Next Post: Tuning the Chef Server for Scale">Tuning the Chef Server for Scale &raquo;</a>
+      
     </p>
   </footer>
 </article>
@@ -399,6 +401,10 @@
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/04/20/tuning-the-chef-server-for-scale/">Tuning the Chef Server for Scale</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2015/04/07/setting-up-your-private-supermarket-server/">Setting Up Your Private Supermarket Server</a>

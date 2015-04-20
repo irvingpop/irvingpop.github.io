@@ -4,7 +4,7 @@
   <title><![CDATA[Irving's blog]]></title>
   <link href="http://irvingpop.github.io/atom.xml" rel="self"/>
   <link href="http://irvingpop.github.io/"/>
-  <updated>2015-04-20T13:44:46-07:00</updated>
+  <updated>2015-04-20T14:07:32-07:00</updated>
   <id>http://irvingpop.github.io/</id>
   <author>
     <name><![CDATA[Irving Popovetsky]]></name>
@@ -12,6 +12,25 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Tuning the Chef Server for Scale]]></title>
+    <link href="http://irvingpop.github.io/blog/2015/04/20/tuning-the-chef-server-for-scale/"/>
+    <updated>2015-04-20T13:51:36-07:00</updated>
+    <id>http://irvingpop.github.io/blog/2015/04/20/tuning-the-chef-server-for-scale</id>
+    <content type="html"><![CDATA[<p>In Chef&rsquo;s Customer Engineering team we are frequently asked for advice on tuning the Chef Server for high-scale situations. Below is a summary of what we generally tell customers.</p>
+
+<h2>General Advice</h2>
+
+<h3>Understand the OSS components that make up the Chef Server</h3>
+
+<h3>Have good monitoring in place</h3>
+
+<h3>Think about API requests per second rather than node counts</h3>
+
+<h3>DRBD: Don&rsquo;t do it</h3>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Setting Up Your Private Supermarket Server]]></title>
@@ -143,11 +162,11 @@
 
 <p>Supermarket is still in early stages and does not have official Support from Chef, HA, backup tools, etc.  Although several of our key customers are running Supermarket in prod, they are doing it at their own risk.</p>
 
-<p>In general we recommend that you start small.</p>
+<p>In general we recommend that you start using small VMs, it&rsquo;s easy to increase your VM size as you need it. Put your <code>/var/opt/supermarket</code> directory on a separate disk and use LVM so that it can be expanded.</p>
 
 <h3>Your Wrapper Cookbook attributes</h3>
 
-<p>It is recommended that use use a wrapper cookbook with role recipes to deploy Supermarket.</p>
+<p>We recommend that you use use a wrapper cookbook with role recipes to deploy Supermarket.</p>
 
 <p>All of the keys under <code>node['supermarket_omnibus']</code> are written out as <code>/etc/supermarket/supermarket.json</code>.  You can add others as you see fit to override the defaults specified in the <a href="https://github.com/chef/omnibus-supermarket/blob/master/cookbooks/omnibus-supermarket/attributes/default.rb">supermarket Omnibus package</a>
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
