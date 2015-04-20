@@ -44,7 +44,7 @@ Note the `uid` and `secret` values from this file, you will need them for the ne
 
 In the spirit of "code as documentation" I've provided a simple cookbook and test-kitchen configuration for testing Supermarket Omnibus packages. These packages are downloaded from https://packagecloud.io/chef/stable
 
-1. Download a copy of the `supermarket-omnibus-cookbook`
+1. Download a copy of the [supermarket-omnibus-cookbook]https://github.com/irvingpop/supermarket-omnibus-cookbook
 ```bash
 git clone https://github.com/irvingpop/supermarket-omnibus-cookbook.git supermarket-omnibus-cookbook
 cd supermarket-omnibus-cookbook
@@ -79,6 +79,50 @@ cd supermarket-omnibus-cookbook
 
 6. Upon login, you should see:
 {% img https://www.getchef.com/blog/wp-content/uploads/2014/08/oc-id5-1024x343.png %}
+
+## Uploading your first cookbook to Supermarket
+
+1. Install the [knife-supermarket](https://github.com/chef/knife-supermarket) gem. In ChefDK:
+```bash
+chef gem install knife-supermarket
+```
+2. In your `knife.rb` file, add a setting for the supermarket server:
+```ruby
+knife[:supermarket_site] = 'https://default-centos-66'
+```
+3. To resolve any SSL errors, fetch and verify the Supermarket server's SSL certificate:
+```bash
+knife ssl fetch https://default-centos-66
+knife ssl check https://default-centos-66
+```
+4. Upload your cookbook to Supermarket
+```bash
+knife supermarket share mycookbook "Other"
+```
+
+
+## Running Supermarket in Production
+Supermarket is still in early stages and does not have official Support from Chef, HA, backup tools, etc.  Although several of our key customers are running Supermarket in prod, they are doing it at their own risk.
+
+In general we recommend that you start small.
+
+### Your Wrapper Cookbook attributes
+It is recommended that use use a wrapper cookbook with role recipes to deploy Supermarket.
+
+All of the keys under `node['supermarket_omnibus']` are written out as `/etc/supermarket/supermarket.json`.  You can add others as you see fit to override the defaults specified in the [supermarket Omnibus package](https://github.com/chef/omnibus-supermarket/blob/master/cookbooks/omnibus-supermarket/attributes/default.rb)
+```ruby
+default['supermarket_omnibus']['chef_server_url'] = 'https://chefserver.mycompany.com'
+default['supermarket_omnibus']['chef_oauth2_app_id'] = '14dfcf186221781cff51eedd5ac1616'
+default['supermarket_omnibus']['chef_oauth2_secret'] = 'a49402219627cfa6318d58b13e90aca'
+default['supermarket_omnibus']['chef_oauth2_verify_ssl'] = false
+```
+
+### Scaling the system
+Supermarket is a Ruby on Rails app with a Postgres backend, and typical RoR scaling rules apply.  If you wish to run Supermarket in a scale-out or HA mode, you can do this by building our your own back-end components:
+
+* **Database:** Build a separate PostgreSQL 9.3+ server (or HA pair). Please note that the following Postgres extensions must be installed and loaded: `pgpsql` and `pg_trgm`
+* **Cookbook Storage** Cookbook tarballs are stored by default in `/var/opt/supermarket/data`. You can change this to use Amazon S3 (recommended) or an [S3-compatible service](http://stackoverflow.com/questions/10574909/is-there-an-open-source-equivalent-to-amazon-s3). If those are not an option you can symlink this directory to shared storage (e.g. NFS) although this has not been fully tested against race conditions.
+* **(Optional) Caching Service:** Supermarket uses Redis as its caching service. You can safely run one Redis instance per Supermarket app server, or you can choose to run a Redis 2.8+ server or HA pair.
 
 ## Troubleshooting & FAQ
 
