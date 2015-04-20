@@ -79,9 +79,6 @@
 
 <time class='entry-date' datetime='2015-04-07T15:48:34-07:00'><span class='date'><span class='date-month'>Apr</span> <span class='date-day'>7</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:48 pm</span></time>
         
-           | <a href="#disqus_thread"
-             data-disqus-identifier="http://irvingpop.github.io">Comments</a>
-        
       </p>
     
   </header>
@@ -140,7 +137,7 @@
 <p>In the spirit of &ldquo;code as documentation&rdquo; I&rsquo;ve provided a simple cookbook and test-kitchen configuration for testing Supermarket Omnibus packages. These packages are downloaded from <a href="https://packagecloud.io/chef/stable">https://packagecloud.io/chef/stable</a></p>
 
 <ol>
-<li><p>Download a copy of the <code>supermarket-omnibus-cookbook</code>
+<li><p>Download a copy of the [supermarket-omnibus-cookbook]<a href="https://github.com/irvingpop/supermarket-omnibus-cookbook">https://github.com/irvingpop/supermarket-omnibus-cookbook</a>
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'>git clone https://github.com/irvingpop/supermarket-omnibus-cookbook.git supermarket-omnibus-cookbook
@@ -184,13 +181,43 @@
 </ol>
 
 
+<h2>Taking it to Prod</h2>
+
+<p>Supermarket is still in early stages and does not have official Support from Chef, HA, backup tools, etc.  Although several of our key customers are running Supermarket in prod, they are doing it at their own risk.</p>
+
+<h3>Your Wrapper Cookbook attributes</h3>
+
+<p>It is recommended that use use a wrapper cookbook with role recipes to deploy Supermarket.</p>
+
+<p>All of the keys under <code>node['supermarket_omnibus']</code> are written out as <code>/etc/supermarket/supermarket.json</code>.  You can add others as you see fit to override the defaults specified in the <a href="https://github.com/chef/omnibus-supermarket/blob/master/cookbooks/omnibus-supermarket/attributes/default.rb">supermarket Omnibus package</a>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">default</span><span class="o">[</span><span class="s1">&#39;supermarket_omnibus&#39;</span><span class="o">][</span><span class="s1">&#39;chef_server_url&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;https://chefserver.mycompany.com&#39;</span>
+</span><span class='line'><span class="n">default</span><span class="o">[</span><span class="s1">&#39;supermarket_omnibus&#39;</span><span class="o">][</span><span class="s1">&#39;chef_oauth2_app_id&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;14dfcf186221781cff51eedd5ac1616&#39;</span>
+</span><span class='line'><span class="n">default</span><span class="o">[</span><span class="s1">&#39;supermarket_omnibus&#39;</span><span class="o">][</span><span class="s1">&#39;chef_oauth2_secret&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;a49402219627cfa6318d58b13e90aca&#39;</span>
+</span><span class='line'><span class="n">default</span><span class="o">[</span><span class="s1">&#39;supermarket_omnibus&#39;</span><span class="o">][</span><span class="s1">&#39;chef_oauth2_verify_ssl&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="kp">false</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h3>Scaling the system</h3>
+
+<p>Supermarket is a Ruby on Rails app with a Postgres backend, and typical RoR scaling rules apply.  If you wish to run Supermarket in a scale-out or HA mode, you can do this by building our your own back-end components:</p>
+
+<ul>
+<li><strong>Database:</strong> Build a separate PostgreSQL 9.3+ server (or HA pair). Please note that the following Postgres extensions must be installed and loaded: <code>pgpsql</code> and <code>pg_trgm</code></li>
+<li><strong>Cookbook Storage</strong> Cookbook tarballs are stored by default in <code>/var/opt/supermarket/data</code>. You can change this to use Amazon S3 (recommended) or an <a href="http://stackoverflow.com/questions/10574909/is-there-an-open-source-equivalent-to-amazon-s3">S3-compatible service</a>. If those are not an option you can symlink this directory to shared storage (e.g. NFS) although this has not been fully tested against race conditions.</li>
+<li><strong>(Optional) Caching Service:</strong> Supermarket uses Redis as its caching service. You can safely run one Redis instance per Supermarket app server, or you can choose to run a Redis 2.8+ server or HA pair.</li>
+</ul>
+
+
 <h2>Troubleshooting &amp; FAQ</h2>
 
 <h3>Incorrect redirect URL</h3>
 
 <p>The redirect URL specified in oc-id <strong>MUST</strong> match the hostname of the Supermarket server. Also, you must get the URI correct (/auth/chef_oauth2/callback). If these are not true, you will recieve an error message like:
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>The redirect uri included is not valid.
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">The</span> <span class="n">redirect</span> <span class="n">uri</span> <span class="n">included</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">valid</span><span class="o">.</span>
 </span></code></pre></td></tr></table></div></figure></p>
 
 <h3>Supermarket server cannot reach oc-id, throws 500 error during login</h3>
