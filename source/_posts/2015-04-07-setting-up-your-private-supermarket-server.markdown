@@ -104,10 +104,10 @@ knife supermarket share mycookbook "Other"
 ## Running Supermarket in Production
 Supermarket is still in early stages and does not have official Support from Chef, HA, backup tools, etc.  Although several of our key customers are running Supermarket in prod, they are doing it at their own risk.
 
-In general we recommend that you start small.
+In general we recommend that you start using small VMs, it's easy to increase your VM size as you need it. Put your `/var/opt/supermarket` directory on a separate disk and use LVM so that it can be expanded.
 
 ### Your Wrapper Cookbook attributes
-It is recommended that use use a wrapper cookbook with role recipes to deploy Supermarket.
+We recommend that you use use a wrapper cookbook with role recipes to deploy Supermarket.
 
 All of the keys under `node['supermarket_omnibus']` are written out as `/etc/supermarket/supermarket.json`.  You can add others as you see fit to override the defaults specified in the [supermarket Omnibus package](https://github.com/chef/omnibus-supermarket/blob/master/cookbooks/omnibus-supermarket/attributes/default.rb)
 ```ruby
