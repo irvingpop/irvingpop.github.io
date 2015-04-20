@@ -181,9 +181,35 @@
 </ol>
 
 
-<h2>Taking it to Prod</h2>
+<h2>Uploading your first cookbook to Supermarket</h2>
+
+<ol>
+<li>Install the <a href="https://github.com/chef/knife-supermarket">knife-supermarket</a> gem. In ChefDK:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>chef gem install knife-supermarket
+</span></code></pre></td></tr></table></div></figure></li>
+<li>In your <code>knife.rb</code> file, add a setting for the supermarket server:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">knife</span><span class="o">[</span><span class="ss">:supermarket_site</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;https://default-centos-66&#39;</span>
+</span></code></pre></td></tr></table></div></figure></li>
+<li>To resolve any SSL errors, fetch and verify the Supermarket server&rsquo;s SSL certificate:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>knife ssl fetch https://default-centos-66
+</span><span class='line'>knife ssl check https://default-centos-66
+</span></code></pre></td></tr></table></div></figure></li>
+<li>Upload your cookbook to Supermarket
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>knife supermarket share mycookbook <span class="s2">&quot;Other&quot;</span>
+</span></code></pre></td></tr></table></div></figure></li>
+</ol>
+
+
+<h2>Running Supermarket in Production</h2>
 
 <p>Supermarket is still in early stages and does not have official Support from Chef, HA, backup tools, etc.  Although several of our key customers are running Supermarket in prod, they are doing it at their own risk.</p>
+
+<p>In general we recommend that you start small.</p>
 
 <h3>Your Wrapper Cookbook attributes</h3>
 

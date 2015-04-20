@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Chef | Irving's blog]]></title>
   <link href="http://irvingpop.github.io/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://irvingpop.github.io/"/>
-  <updated>2015-04-20T11:52:33-07:00</updated>
+  <updated>2015-04-20T13:44:46-07:00</updated>
   <id>http://irvingpop.github.io/</id>
   <author>
     <name><![CDATA[Irving Popovetsky]]></name>
@@ -115,9 +115,34 @@ kitchen converge default-centos-66 &amp;&amp; kitchen verify default-centos-66
 </ol>
 
 
-<h2>Taking it to Prod</h2>
+<h2>Uploading your first cookbook to Supermarket</h2>
+
+<ol>
+<li>Install the <a href="https://github.com/chef/knife-supermarket">knife-supermarket</a> gem. In ChefDK:
+<code>bash
+chef gem install knife-supermarket
+</code></li>
+<li>In your <code>knife.rb</code> file, add a setting for the supermarket server:
+<code>ruby
+knife[:supermarket_site] = 'https://default-centos-66'
+</code></li>
+<li>To resolve any SSL errors, fetch and verify the Supermarket server&rsquo;s SSL certificate:
+<code>bash
+knife ssl fetch https://default-centos-66
+knife ssl check https://default-centos-66
+</code></li>
+<li>Upload your cookbook to Supermarket
+<code>bash
+knife supermarket share mycookbook "Other"
+</code></li>
+</ol>
+
+
+<h2>Running Supermarket in Production</h2>
 
 <p>Supermarket is still in early stages and does not have official Support from Chef, HA, backup tools, etc.  Although several of our key customers are running Supermarket in prod, they are doing it at their own risk.</p>
+
+<p>In general we recommend that you start small.</p>
 
 <h3>Your Wrapper Cookbook attributes</h3>
 
