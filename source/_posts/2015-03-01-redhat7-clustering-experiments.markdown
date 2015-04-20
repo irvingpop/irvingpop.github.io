@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Experimenting with Redhat Cluster Suite version 7"
+title: "Experimenting with Redhat Cluster Suite 7"
 date: 2015-03-01T15:48:34-07:00
 categories: chef clustering
 ---
