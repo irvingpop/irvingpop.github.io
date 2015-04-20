@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Chef | Irving's blog]]></title>
   <link href="http://irvingpop.github.io/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://irvingpop.github.io/"/>
-  <updated>2015-04-20T14:07:32-07:00</updated>
+  <updated>2015-04-20T14:07:37-07:00</updated>
   <id>http://irvingpop.github.io/</id>
   <author>
     <name><![CDATA[Irving Popovetsky]]></name>
@@ -12,25 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[Tuning the Chef Server for Scale]]></title>
-    <link href="http://irvingpop.github.io/blog/2015/04/20/tuning-the-chef-server-for-scale/"/>
-    <updated>2015-04-20T13:51:36-07:00</updated>
-    <id>http://irvingpop.github.io/blog/2015/04/20/tuning-the-chef-server-for-scale</id>
-    <content type="html"><![CDATA[<p>In Chef&rsquo;s Customer Engineering team we are frequently asked for advice on tuning the Chef Server for high-scale situations. Below is a summary of what we generally tell customers.</p>
-
-<h2>General Advice</h2>
-
-<h3>Understand the OSS components that make up the Chef Server</h3>
-
-<h3>Have good monitoring in place</h3>
-
-<h3>Think about API requests per second rather than node counts</h3>
-
-<h3>DRBD: Don&rsquo;t do it</h3>
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[Setting Up Your Private Supermarket Server]]></title>
