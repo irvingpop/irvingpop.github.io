@@ -15,7 +15,7 @@ In Chef's Customer Engineering team we are frequently asked for advice on tuning
 ### Understand the OSS components that make up the Chef Server
 A good way to think about the Chef server is as a collection of Microservices components underpinned by OSS software:
 
-* Nginx
+* Nginx (openresty)
 * PostgreSQL
 * Solr
 * RabbitMQ
@@ -24,8 +24,11 @@ A good way to think about the Chef server is as a collection of Microservices co
 * Erlang/OTP
 * Ruby
 * The Linux Kernel
+  * LVM
+  * Storage subsystem
+  * Network stack
 
-It's important to understand the performance characteristics, monitoring and troubleshooting of these components.  Especially Postgres, Solr, RabbitMQ and Linux systems in general.
+It's important to understand the performance characteristics, monitoring and troubleshooting of these components.  Especially Postgres, Solr, RabbitMQ and Linux systems in general. It's worth noting that the Chef server core is Open Source, and all if its code can be examined [on Github](https://github.com/chef/chef-server)
 
 Because these components are glued together using Chef, it's highly recommended that you familiarize yourself with the [cookbooks that configure the Chef server when you run `chef-server-ctl reconfigure`](https://github.com/chef/opscode-omnibus/tree/master/files/private-chef-cookbooks)
 
@@ -33,7 +36,10 @@ Because these components are glued together using Chef, it's highly recommended 
 
 We don't provide prescriptive monitoring guidance at this time, but here's our advice:
 
-* Use existing Open source software (Sensu, Nagios, etc) to collect metrics from the OSS components.  This should be fairly straightforward to set up.
+* Use existing Open source software (Sensu, Nagios, etc) to collect metrics and test the health of the OSS components.  This should be fairly straightforward to set up.
+  * Use [pgBadger](http://dalibo.github.io/pgbadger/) for Postgres log analysis
+  * Install the [RabbitMQ Management Plugin](https://www.rabbitmq.com/management.html) for detailed monitoring of RabbitMQ
+* Configure your monitoring systems and load balancers to query the Health status endpoint of erchef (https://mychefserver/_status)
 * Run a graphite server. erchef will send detailed statistics if you set the following in your `chef-server.rb` file:
 ```ruby
 folsom_graphite['enable'] = true
