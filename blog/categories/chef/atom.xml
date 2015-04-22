@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Chef | Irving's blog]]></title>
   <link href="http://irvingpop.github.io/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://irvingpop.github.io/"/>
-  <updated>2015-04-22T13:19:22-07:00</updated>
+  <updated>2015-04-22T14:58:39-07:00</updated>
   <id>http://irvingpop.github.io/</id>
   <author>
     <name><![CDATA[Irving Popovetsky]]></name>
@@ -107,7 +107,7 @@ folsom_graphite['port'] = 2003
 <p>In the field we&rsquo;ve found that DRBD has a negative impact on performance and availability of Chef server clusters. Specifically:</p>
 
 <ul>
-<li>Because DRBD uses synchronous replication, a block is not considered &ldquo;comitted to disk&rdquo; until it was been confirmed by both nodes in the cluster. This adds significant latency to each IOP.</li>
+<li>Because DRBD uses synchronous replication, a block is not considered &ldquo;committed to disk&rdquo; until it has been confirmed by both nodes in the cluster. This adds significant latency to each IOP.</li>
 <li>DRBD&rsquo;s bandwidth is limited by the network throughput between the nodes. Dedicated cross-over links are not possible in all scenarios (for example VMs) which leads to low and inconsistent throughput.</li>
 <li>DRBD resyncs can take a very long time and greatly impact performance while running.</li>
 <li>Although DRBD protects against hardware failure, it does a very poor job of protecting against many classes of software failure. For example, a corrupt database is replicated whole to the other node, so failing over will not correct the system.</li>
