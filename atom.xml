@@ -4,7 +4,7 @@
   <title><![CDATA[Irving's blog]]></title>
   <link href="http://irvingpop.github.io/atom.xml" rel="self"/>
   <link href="http://irvingpop.github.io/"/>
-  <updated>2015-04-20T14:07:37-07:00</updated>
+  <updated>2015-04-22T13:19:22-07:00</updated>
   <id>http://irvingpop.github.io/</id>
   <author>
     <name><![CDATA[Irving Popovetsky]]></name>
@@ -12,6 +12,219 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Tuning the Chef Server for Scale]]></title>
+    <link href="http://irvingpop.github.io/blog/2015/04/20/tuning-the-chef-server-for-scale/"/>
+    <updated>2015-04-20T13:51:36-07:00</updated>
+    <id>http://irvingpop.github.io/blog/2015/04/20/tuning-the-chef-server-for-scale</id>
+    <content type="html"><![CDATA[<p>In Chef&rsquo;s Customer Engineering team we are frequently asked for advice on tuning the Chef Server for high-scale situations. Below is a summary of what we generally tell customers. Note that these tuning settings are specific to Chef Server 12, which is the recommended version for any customer who cares about the performance of their Chef server.</p>
+
+<!-- more -->
+
+
+<h2>General Advice</h2>
+
+<h3>Understand the OSS components that make up the Chef Server</h3>
+
+<p>A good way to think about the Chef server is as a collection of Microservices components underpinned by OSS software:</p>
+
+<ul>
+<li>Nginx (openresty)</li>
+<li>PostgreSQL</li>
+<li>Solr</li>
+<li>RabbitMQ</li>
+<li>Redis</li>
+<li>Chef</li>
+<li>Erlang/OTP</li>
+<li>Ruby</li>
+<li>The Linux Kernel
+
+<ul>
+<li>LVM</li>
+<li>Storage subsystem</li>
+<li>Network stack</li>
+</ul>
+</li>
+</ul>
+
+
+<p>It&rsquo;s important to understand the performance characteristics, monitoring and troubleshooting of these components.  Especially Postgres, Solr, RabbitMQ and Linux systems in general. It&rsquo;s worth noting that the Chef server core is Open Source, and all if its code can be examined <a href="https://github.com/chef/chef-server">on Github</a></p>
+
+<p>Because these components are glued together using Chef, it&rsquo;s highly recommended that you familiarize yourself with the <a href="https://github.com/chef/opscode-omnibus/tree/master/files/private-chef-cookbooks">cookbooks that configure the Chef server when you run <code>chef-server-ctl reconfigure</code></a></p>
+
+<h3>Have good monitoring in place</h3>
+
+<p>We don&rsquo;t provide prescriptive monitoring guidance at this time, but here&rsquo;s our advice:</p>
+
+<ul>
+<li>Use existing Open source software (Sensu, Nagios, etc) to collect metrics and test the health of the OSS components.  This should be fairly straightforward to set up.
+
+<ul>
+<li>Use <a href="http://dalibo.github.io/pgbadger/">pgBadger</a> for Postgres log analysis</li>
+<li>Install the <a href="https://www.rabbitmq.com/management.html">RabbitMQ Management Plugin</a> for detailed monitoring of RabbitMQ</li>
+</ul>
+</li>
+<li>Configure your monitoring systems and load balancers to query the Health status endpoint of erchef (<a href="https://mychefserver/_status">https://mychefserver/_status</a>)</li>
+<li>Run a graphite server. erchef will send detailed statistics if you set the following in your <code>chef-server.rb</code> file:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">folsom_graphite</span><span class="o">[</span><span class="s1">&#39;enable&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>
+</span><span class='line'><span class="n">folsom_graphite</span><span class="o">[</span><span class="s1">&#39;host&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;graphite.mycompany.com&#39;</span>
+</span><span class='line'><span class="n">folsom_graphite</span><span class="o">[</span><span class="s1">&#39;port&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">2003</span>
+</span></code></pre></td></tr></table></div></figure></li>
+<li>Use Splunk or Logstash to collect and analyze your Chef server logs.
+
+<ul>
+<li>You can collect and graph useful performance data by graphing <code>/var/log/opscode/opscode-erchef/requests.log.N</code>, <code>/var/log/opscode/oc_bifrost/requests.log.N</code> and <code>/var/log/opscode/opscode-reporting/requests.log.N</code></li>
+<li>Each request line will show (in ms) various performance counter. For example: <code>req_time=20; rdbms_time=2; rdbms_count=3; authz_time=5; authz_count=1;</code></li>
+</ul>
+</li>
+</ul>
+
+
+<h3>Think about API requests per second rather than node counts</h3>
+
+<p>A very common measurement for the size of Chef servers/clusters is the number of nodes they serve. However, this number is not terribly useful because of other elements that can cause very wide variation. Namely:</p>
+
+<ul>
+<li>The interval and splay of Chef client runs
+
+<ul>
+<li>1000 nodes every hour == 500 nodes every 30 minutes</li>
+<li>Insufficient splay can cause a &ldquo;stampede condition&rdquo; on the Chef server. Splay should be equal to the interval in order to get maximum smoothness of request load.</li>
+</ul>
+</li>
+<li>The number and complexity of search requests and databag fetches performed during each Chef run</li>
+<li>The number of cookbooks depended on for each Chef run. More cookbooks adds loading to the depsolver and also to the Bookshelf service which serves cookbooks</li>
+<li>The size of node data, which we&rsquo;ve seen range from 32kb to 5MB (the default maximum is 1MB but can be increased). This adds load to the indexing service (opscode-expander) as well as to Solr</li>
+</ul>
+
+
+<p>Although it&rsquo;s not perfect, we&rsquo;ve found that a good rule of thumb for examining active Chef servers is the number of API requests per second aggregated across the entire cluster. We&rsquo;ve found that clusters which sustained higher than 125 API RPS started to experience occasional errors.</p>
+
+<h3>DRBD: Don&rsquo;t do it</h3>
+
+<p>In the field we&rsquo;ve found that DRBD has a negative impact on performance and availability of Chef server clusters. Specifically:</p>
+
+<ul>
+<li>Because DRBD uses synchronous replication, a block is not considered &ldquo;comitted to disk&rdquo; until it was been confirmed by both nodes in the cluster. This adds significant latency to each IOP.</li>
+<li>DRBD&rsquo;s bandwidth is limited by the network throughput between the nodes. Dedicated cross-over links are not possible in all scenarios (for example VMs) which leads to low and inconsistent throughput.</li>
+<li>DRBD resyncs can take a very long time and greatly impact performance while running.</li>
+<li>Although DRBD protects against hardware failure, it does a very poor job of protecting against many classes of software failure. For example, a corrupt database is replicated whole to the other node, so failing over will not correct the system.</li>
+</ul>
+
+
+<h3>Beware LVM snapshots impact on performance</h3>
+
+<p>LVM is generally recommended for storing all Chef Server data (<code>/var/opt/opscode</code> in standalone/tier installs and <code>/var/opt/opscode/drbd/data</code> in HA installs) because it provides the ability to expand disks on the fly and create crash-consistent snapshots.</p>
+
+<p>However it&rsquo;s important to know that as LVM snapshots increase in size it is very detrimental to performance:</p>
+
+<ul>
+<li><a href="http://www.percona.com/blog/2013/07/09/lvm-read-performance-during-snapshots/">http://www.percona.com/blog/2013/07/09/lvm-read-performance-during-snapshots/</a></li>
+<li><a href="http://www.percona.com/blog/2009/02/05/disaster-lvm-performance-in-snapshot-mode/">http://www.percona.com/blog/2009/02/05/disaster-lvm-performance-in-snapshot-mode/</a></li>
+</ul>
+
+
+<p>Therefore it is recommend that snapshots are used to create consistent backups, but are immediately deleted after they are no longer needed.</p>
+
+<h2>Chef Server tuning tips</h2>
+
+<h3>Server sizing</h3>
+
+<p><strong>Chef Server frontends:</strong></p>
+
+<ul>
+<li>Frontends run stateless services only (erchef, bifrost, reporting, manage) and can be scaled horizontally.</li>
+<li>They are almost always CPU bound, and only suffer memory or disk pressure during fault scenarios (typically because of backend issues).</li>
+<li>A good starting point for frontends is 4 CPU cores and 8 GB RAM. Disk on frontends does not matter.</li>
+</ul>
+
+
+<p><strong>Chef server backends:</strong></p>
+
+<ul>
+<li>Backends mix a number of disk, memory and CPU bound services (Postgres, Solr, RabbitMQ, Expander)</li>
+<li>A good starting point for backends is 8 CPU cores and 32 GB of RAM.</li>
+<li>Flash-based storage is highly recommend, combined with the XFS filesystem and LVM.</li>
+</ul>
+
+
+<h3>chef-server.rb tuning settings</h3>
+
+<p><strong>Database pooling:</strong></p>
+
+<p>In the erlang OTP process model, the number of workers is limited by the size of the database connection pool (default 20). Increasing the database pool allows for more workers, but puts added memory pressure on the database service.</p>
+
+<p>In order to handle the greater number of connections, you must also increase the Postgres <code>max_connections</code> value. This value must consider an erchef, bifrost and reporting process connecting from each frontend, plus an extra 20% for breathing room.</p>
+
+<p>Suggested values for a high-performing cluster with 4-6 frontends:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">postgresql</span><span class="o">[</span><span class="s1">&#39;max_connections&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">1024</span>
+</span><span class='line'><span class="n">opscode_erchef</span><span class="o">[</span><span class="s1">&#39;db_pool_size&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">60</span>
+</span><span class='line'><span class="n">oc_bifrost</span><span class="o">[</span><span class="s1">&#39;db_pool_size&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">60</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><strong>Erchef to bifrost http connection pool:</strong>
+erchef also maintains a pool of http connections to bifrost, the authz service.  It&rsquo;s important to raise the initial and maximum number of connections with respect to the database pool sizes.</p>
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">oc_chef_authz</span><span class="o">[</span><span class="s1">&#39;http_init_count&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">100</span>
+</span><span class='line'><span class="n">oc_chef_authz</span><span class="o">[</span><span class="s1">&#39;http_max_count&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">200</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><strong>Erchef depsolver and keygen tuning:</strong>
+Two expensive computations that erchef must perform are the depsolver (a Ruby process which solves the cookbook dependencies) as well as the client key generator (which can be hit hard when large fleets of chef nodes are provisioned)</p>
+
+<p>Suggested values:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">opscode_erchef</span><span class="o">[</span><span class="s1">&#39;depsolver_worker_count&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">4</span> <span class="c1"># should equal the number of CPU cores</span>
+</span><span class='line'><span class="n">opscode_erchef</span><span class="o">[</span><span class="s1">&#39;depsolver_timeout&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">120000</span>
+</span><span class='line'><span class="n">opscode_erchef</span><span class="o">[</span><span class="s1">&#39;keygen_cache_size&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">1000</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><strong>Nginx cookbook caching:</strong>
+A new feature in Chef Server 12.0.4 is <a href="https://www.chef.io/blog/2015/02/18/cookbook-caching/">Nginx cookbook caching</a>. This takes load off of the backend Bookshelf service by storing cookbook files in Nginx.</p>
+
+<p>Suggested values:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">opscode_erchef</span><span class="o">[</span><span class="s1">&#39;nginx_bookshelf_caching&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;:on&quot;</span>
+</span><span class='line'><span class="n">opscode_erchef</span><span class="o">[</span><span class="s1">&#39;s3_url_expiry_window_size&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;100%&quot;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><strong>PostgreSQL tuning:</strong>
+We already tune PostgreSQL memory settings to sane values based on the backend&rsquo;s phyiscal RAM. For example, <code>effective_cache_size</code> is set to 50% of RAM, and <code>shared_buffers</code> to 25% of physical RAM.</p>
+
+<p>To handle the heavy write load on large clusters, it is recommended to tune the checkpointer.</p>
+
+<p>Suggested values:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">postgresql</span><span class="o">[</span><span class="s1">&#39;checkpoint_segments&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">100</span>
+</span><span class='line'><span class="n">postgresql</span><span class="o">[</span><span class="s1">&#39;checkpoint_completion_target&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">0</span><span class="o">.</span><span class="mi">9</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><strong>Solr JVM tuning:</strong>
+By default we compute Solr&rsquo;s JVM heap size to be either 25% of system memory or 1024MB, whichever is smaller. Large chef server clusters should increase this value to smaller of 25% of system memory or 4096MB.</p>
+
+<p>Suggested values:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">opscode_solr4</span><span class="o">[</span><span class="s1">&#39;heap_size&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">4096</span>
+</span><span class='line'><span class="n">opscode_solr4</span><span class="o">[</span><span class="s1">&#39;new_size&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">256</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><em>WARNING: It is not recommended to use a JVM heap_size above 8GB, at that level the cost of Garbage Collection becomes too high and impacts performance worse than using a smaller heap</em></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Setting Up Your Private Supermarket Server]]></title>
