@@ -56,7 +56,7 @@ A very common measurement for the size of Chef servers/clusters is the number of
 * The interval and splay of Chef client runs
   * 1000 nodes every hour == 500 nodes every 30 minutes
   * Insufficient splay can cause a "stampede condition" on the Chef server. Splay should be equal to the interval in order to get maximum smoothness of request load.
-* The number and complexity of search requests performed during each Chef run
+* The number and complexity of search requests and databag fetches performed during each Chef run
 * The number of cookbooks depended on for each Chef run. More cookbooks adds loading to the depsolver and also to the Bookshelf service which serves cookbooks
 * The size of node data, which we've seen range from 32kb to 5MB (the default maximum is 1MB but can be increased). This adds load to the indexing service (opscode-expander) as well as to Solr
 
@@ -158,4 +158,6 @@ Suggested values:
 opscode_solr4['heap_size'] = 4096
 opscode_solr4['new_size'] = 256
 ```
+
+*WARNING: It is not recommended to use a JVM heap_size above 8GB, at that level the cost of Garbage Collection becomes too high and impacts performance worse than using a smaller heap*
 
