@@ -65,7 +65,7 @@ Although it's not perfect, we've found that a good rule of thumb for examining a
 ### DRBD: Don't do it
 In the field we've found that DRBD has a negative impact on performance and availability of Chef server clusters. Specifically:
 
-* Because DRBD uses synchronous replication, a block is not considered "comitted to disk" until it was been confirmed by both nodes in the cluster. This adds significant latency to each IOP.
+* Because DRBD uses synchronous replication, a block is not considered "committed to disk" until it has been confirmed by both nodes in the cluster. This adds significant latency to each IOP.
 * DRBD's bandwidth is limited by the network throughput between the nodes. Dedicated cross-over links are not possible in all scenarios (for example VMs) which leads to low and inconsistent throughput.
 * DRBD resyncs can take a very long time and greatly impact performance while running.
 * Although DRBD protects against hardware failure, it does a very poor job of protecting against many classes of software failure. For example, a corrupt database is replicated whole to the other node, so failing over will not correct the system.
