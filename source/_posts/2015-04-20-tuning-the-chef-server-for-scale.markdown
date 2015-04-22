@@ -6,7 +6,7 @@ comments: true
 categories: chef server
 ---
 
-In Chef's Customer Engineering team we are frequently asked for advice on tuning the Chef Server for high-scale situations. Below is a summary of what we generally tell customers.
+In Chef's Customer Engineering team we are frequently asked for advice on tuning the Chef Server for high-scale situations. Below is a summary of what we generally tell customers. Note that these tuning settings are specific to Chef Server 12, which is the recommended version for any customer who cares about the performance of their Chef server.
 
 <!-- more -->
 
@@ -71,6 +71,16 @@ In the field we've found that DRBD has a negative impact on performance and avai
 * Although DRBD protects against hardware failure, it does a very poor job of protecting against many classes of software failure. For example, a corrupt database is replicated whole to the other node, so failing over will not correct the system.
 
 
+### Beware LVM snapshots impact on performance
+LVM is generally recommended for storing all Chef Server data (`/var/opt/opscode` in standalone/tier installs and `/var/opt/opscode/drbd/data` in HA installs) because it provides the ability to expand disks on the fly and create crash-consistent snapshots.
+
+However it's important to know that as LVM snapshots increase in size it is very detrimental to performance:
+
+* http://www.percona.com/blog/2013/07/09/lvm-read-performance-during-snapshots/
+* http://www.percona.com/blog/2009/02/05/disaster-lvm-performance-in-snapshot-mode/
+
+Therefore it is recommend that snapshots are used to create consistent backups, but are immediately deleted after they are no longer needed.
+
 ## Chef Server tuning tips
 
 ### Server sizing
@@ -118,7 +128,6 @@ Suggested values:
 opscode_erchef['depsolver_worker_count'] = 4 # should equal the number of CPU cores
 opscode_erchef['depsolver_timeout'] = 120000
 opscode_erchef['keygen_cache_size'] = 1000
-opscode_erchef['keygen_start_size'] = 1000
 ```
 
 **Nginx cookbook caching:**
@@ -146,7 +155,7 @@ By default we compute Solr's JVM heap size to be either 25% of system memory or 
 
 Suggested values:
 ```ruby
-opscode_solr['heap_size'] = 4096
-opscode_solr['new_size'] = 256
+opscode_solr4['heap_size'] = 4096
+opscode_solr4['new_size'] = 256
 ```
 
