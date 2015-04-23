@@ -13,7 +13,7 @@ In Chef's Customer Engineering team we are frequently asked for advice on tuning
 ## General Advice
 
 ### Understand the OSS components that make up the Chef Server
-A good way to think about the Chef server is as a collection of Microservices components underpinned by OSS software:
+A good way to think about the Chef server is as a collection of microservices components underpinned by OSS software:
 
 * Nginx (openresty)
 * PostgreSQL
@@ -121,7 +121,7 @@ oc_chef_authz['http_max_count'] = 200
 ```
 
 **Erchef depsolver and keygen tuning:**
-Two expensive computations that erchef must perform are the depsolver (a Ruby process which solves the cookbook dependencies) as well as the client key generator (which can be hit hard when large fleets of chef nodes are provisioned)
+Two expensive computations that erchef must perform are the depsolver (a Ruby process which solves the cookbook dependencies) as well as the client key generator (which can be hit hard when large fleets of chef nodes are provisioned). Note that Chef 12 clients default to client-side key generation and you probably only need to adjust the keygen value if you still use Chef 11 clients.
 
 Suggested values:
 ```ruby
@@ -142,11 +142,11 @@ opscode_erchef['s3_url_expiry_window_size'] = "100%"
 **PostgreSQL tuning:**
 We already tune PostgreSQL memory settings to sane values based on the backend's phyiscal RAM. For example, `effective_cache_size` is set to 50% of RAM, and `shared_buffers` to 25% of physical RAM.
 
-To handle the heavy write load on large clusters, it is recommended to tune the checkpointer.
+To handle the heavy write load on large clusters, it is recommended to tune the checkpointer per [https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server]
 
 Suggested values:
 ```ruby
-postgresql['checkpoint_segments'] = 100
+postgresql['checkpoint_segments'] = 64
 postgresql['checkpoint_completion_target'] = 0.9
 ```
 
