@@ -93,7 +93,7 @@
 
 <h3>Understand the OSS components that make up the Chef Server</h3>
 
-<p>A good way to think about the Chef server is as a collection of Microservices components underpinned by OSS software:</p>
+<p>A good way to think about the Chef server is as a collection of microservices components underpinned by OSS software:</p>
 
 <ul>
 <li>Nginx (openresty)</li>
@@ -245,7 +245,7 @@ erchef also maintains a pool of http connections to bifrost, the authz service. 
 </span></code></pre></td></tr></table></div></figure></p>
 
 <p><strong>Erchef depsolver and keygen tuning:</strong>
-Two expensive computations that erchef must perform are the depsolver (a Ruby process which solves the cookbook dependencies) as well as the client key generator (which can be hit hard when large fleets of chef nodes are provisioned)</p>
+Two expensive computations that erchef must perform are the depsolver (a Ruby process which solves the cookbook dependencies) as well as the client key generator (which can be hit hard when large fleets of chef nodes are provisioned). Note that Chef 12 clients default to client-side key generation and you probably only need to adjust the keygen value if you still use Chef 11 clients.</p>
 
 <p>Suggested values:
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -269,12 +269,12 @@ A new feature in Chef Server 12.0.4 is <a href="https://www.chef.io/blog/2015/02
 <p><strong>PostgreSQL tuning:</strong>
 We already tune PostgreSQL memory settings to sane values based on the backend&rsquo;s phyiscal RAM. For example, <code>effective_cache_size</code> is set to 50% of RAM, and <code>shared_buffers</code> to 25% of physical RAM.</p>
 
-<p>To handle the heavy write load on large clusters, it is recommended to tune the checkpointer.</p>
+<p>To handle the heavy write load on large clusters, it is recommended to tune the checkpointer per [<a href="https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server">https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server</a>]</p>
 
 <p>Suggested values:
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">postgresql</span><span class="o">[</span><span class="s1">&#39;checkpoint_segments&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">100</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">postgresql</span><span class="o">[</span><span class="s1">&#39;checkpoint_segments&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">64</span>
 </span><span class='line'><span class="n">postgresql</span><span class="o">[</span><span class="s1">&#39;checkpoint_completion_target&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">0</span><span class="o">.</span><span class="mi">9</span>
 </span></code></pre></td></tr></table></div></figure></p>
 

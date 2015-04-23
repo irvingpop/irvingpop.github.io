@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Server | Irving's blog]]></title>
   <link href="http://irvingpop.github.io/blog/categories/server/atom.xml" rel="self"/>
   <link href="http://irvingpop.github.io/"/>
-  <updated>2015-04-22T14:58:39-07:00</updated>
+  <updated>2015-04-23T14:23:24-07:00</updated>
   <id>http://irvingpop.github.io/</id>
   <author>
     <name><![CDATA[Irving Popovetsky]]></name>
@@ -27,7 +27,7 @@
 
 <h3>Understand the OSS components that make up the Chef Server</h3>
 
-<p>A good way to think about the Chef server is as a collection of Microservices components underpinned by OSS software:</p>
+<p>A good way to think about the Chef server is as a collection of microservices components underpinned by OSS software:</p>
 
 <ul>
 <li>Nginx (openresty)</li>
@@ -173,7 +173,7 @@ oc_chef_authz['http_max_count'] = 200
 </code></pre>
 
 <p><strong>Erchef depsolver and keygen tuning:</strong>
-Two expensive computations that erchef must perform are the depsolver (a Ruby process which solves the cookbook dependencies) as well as the client key generator (which can be hit hard when large fleets of chef nodes are provisioned)</p>
+Two expensive computations that erchef must perform are the depsolver (a Ruby process which solves the cookbook dependencies) as well as the client key generator (which can be hit hard when large fleets of chef nodes are provisioned). Note that Chef 12 clients default to client-side key generation and you probably only need to adjust the keygen value if you still use Chef 11 clients.</p>
 
 <p>Suggested values:
 <code>ruby
@@ -194,11 +194,11 @@ opscode_erchef['s3_url_expiry_window_size'] = "100%"
 <p><strong>PostgreSQL tuning:</strong>
 We already tune PostgreSQL memory settings to sane values based on the backend&rsquo;s phyiscal RAM. For example, <code>effective_cache_size</code> is set to 50% of RAM, and <code>shared_buffers</code> to 25% of physical RAM.</p>
 
-<p>To handle the heavy write load on large clusters, it is recommended to tune the checkpointer.</p>
+<p>To handle the heavy write load on large clusters, it is recommended to tune the checkpointer per [<a href="https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server">https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server</a>]</p>
 
 <p>Suggested values:
 <code>ruby
-postgresql['checkpoint_segments'] = 100
+postgresql['checkpoint_segments'] = 64
 postgresql['checkpoint_completion_target'] = 0.9
 </code></p>
 
