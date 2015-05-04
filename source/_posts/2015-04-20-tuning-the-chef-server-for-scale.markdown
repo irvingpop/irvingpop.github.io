@@ -23,12 +23,13 @@ A good way to think about the Chef server is as a collection of microservices co
 * Chef
 * Erlang/OTP
 * Ruby
+* [Runit](http://smarden.org/runit/)
 * The Linux Kernel
   * LVM
   * Storage subsystem
   * Network stack
 
-It's important to understand the performance characteristics, monitoring and troubleshooting of these components.  Especially Postgres, Solr, RabbitMQ and Linux systems in general. It's worth noting that the Chef server core is Open Source, and all if its code can be examined [on Github](https://github.com/chef/chef-server)
+It's important to understand the performance characteristics, monitoring and troubleshooting of these components.  Especially Postgres, Solr, RabbitMQ, Runit and Linux systems in general. It's worth noting that the Chef server core is Open Source, and all if its code can be examined [on Github](https://github.com/chef/chef-server)
 
 Because these components are glued together using Chef, it's highly recommended that you familiarize yourself with the [cookbooks that configure the Chef server when you run `chef-server-ctl reconfigure`](https://github.com/chef/opscode-omnibus/tree/master/files/private-chef-cookbooks)
 
