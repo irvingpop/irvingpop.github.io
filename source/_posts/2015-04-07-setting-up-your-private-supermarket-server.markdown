@@ -153,6 +153,13 @@ There is a known issue with the Supermarket omnibus package that rails messages 
 Then restart the rails service by running
 `supermarket-ctl restart rails`
 
+### How does this OAuth2 stuff work anyway?
+Here's a simplified description of OAuth2:  https://aaronparecki.com/articles/2012/07/29/1/oauth2-simplified
+
+1. When you visit supermarket at https://supermarket<https://supermarket/> and click login, that login redirects you to https://chef-server/oc-id
+2. https://chef-server/oc-id then redirects you back to https://supermarket/auth/endpoint once you are confirmed as authed
+3. Supermarket talks to chef-server/oc-id to verify the token it just received by making an https call to the chef server
+
 ### Contacting packagecloud fails if I'm behind a proxy
 No problem!  Add the following to your `.kitchenl.local.yml` file:
 ```yaml
