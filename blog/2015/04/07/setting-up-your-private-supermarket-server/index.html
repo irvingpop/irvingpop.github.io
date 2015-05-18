@@ -283,6 +283,17 @@
 <p>Then restart the rails service by running
 <code>supermarket-ctl restart rails</code></p>
 
+<h3>How does this OAuth2 stuff work anyway?</h3>
+
+<p>Here&rsquo;s a simplified description of OAuth2:  <a href="https://aaronparecki.com/articles/2012/07/29/1/oauth2-simplified">https://aaronparecki.com/articles/2012/07/29/1/oauth2-simplified</a></p>
+
+<ol>
+<li>When you visit supermarket at <a href="https://supermarket">https://supermarket</a><a href="https://supermarket/">https://supermarket/</a> and click login, that login redirects you to <a href="https://chef-server/oc-id">https://chef-server/oc-id</a></li>
+<li><a href="https://chef-server/oc-id">https://chef-server/oc-id</a> then redirects you back to <a href="https://supermarket/auth/endpoint">https://supermarket/auth/endpoint</a> once you are confirmed as authed</li>
+<li>Supermarket talks to chef-server/oc-id to verify the token it just received by making an https call to the chef server</li>
+</ol>
+
+
 <h3>Contacting packagecloud fails if I&rsquo;m behind a proxy</h3>
 
 <p>No problem!  Add the following to your <code>.kitchenl.local.yml</code> file:

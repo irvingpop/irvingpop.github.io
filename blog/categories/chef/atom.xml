@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Chef | Irving's blog]]></title>
   <link href="http://irvingpop.github.io/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://irvingpop.github.io/"/>
-  <updated>2015-04-23T14:23:24-07:00</updated>
+  <updated>2015-05-18T13:36:15-07:00</updated>
   <id>http://irvingpop.github.io/</id>
   <author>
     <name><![CDATA[Irving Popovetsky]]></name>
@@ -38,6 +38,7 @@
 <li>Chef</li>
 <li>Erlang/OTP</li>
 <li>Ruby</li>
+<li><a href="http://smarden.org/runit/">Runit</a></li>
 <li>The Linux Kernel
 
 <ul>
@@ -49,7 +50,7 @@
 </ul>
 
 
-<p>It&rsquo;s important to understand the performance characteristics, monitoring and troubleshooting of these components.  Especially Postgres, Solr, RabbitMQ and Linux systems in general. It&rsquo;s worth noting that the Chef server core is Open Source, and all if its code can be examined <a href="https://github.com/chef/chef-server">on Github</a></p>
+<p>It&rsquo;s important to understand the performance characteristics, monitoring and troubleshooting of these components.  Especially Postgres, Solr, RabbitMQ, Runit and Linux systems in general. It&rsquo;s worth noting that the Chef server core is Open Source, and all if its code can be examined <a href="https://github.com/chef/chef-server">on Github</a></p>
 
 <p>Because these components are glued together using Chef, it&rsquo;s highly recommended that you familiarize yourself with the <a href="https://github.com/chef/opscode-omnibus/tree/master/files/private-chef-cookbooks">cookbooks that configure the Chef server when you run <code>chef-server-ctl reconfigure</code></a></p>
 
@@ -412,6 +413,17 @@ The redirect uri included is not valid.
 
 <p>Then restart the rails service by running
 <code>supermarket-ctl restart rails</code></p>
+
+<h3>How does this OAuth2 stuff work anyway?</h3>
+
+<p>Here&rsquo;s a simplified description of OAuth2:  <a href="https://aaronparecki.com/articles/2012/07/29/1/oauth2-simplified">https://aaronparecki.com/articles/2012/07/29/1/oauth2-simplified</a></p>
+
+<ol>
+<li>When you visit supermarket at <a href="https://supermarket">https://supermarket</a><a href="https://supermarket/">https://supermarket/</a> and click login, that login redirects you to <a href="https://chef-server/oc-id">https://chef-server/oc-id</a></li>
+<li><a href="https://chef-server/oc-id">https://chef-server/oc-id</a> then redirects you back to <a href="https://supermarket/auth/endpoint">https://supermarket/auth/endpoint</a> once you are confirmed as authed</li>
+<li>Supermarket talks to chef-server/oc-id to verify the token it just received by making an https call to the chef server</li>
+</ol>
+
 
 <h3>Contacting packagecloud fails if I&rsquo;m behind a proxy</h3>
 
