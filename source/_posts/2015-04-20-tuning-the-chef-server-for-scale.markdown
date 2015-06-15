@@ -38,7 +38,7 @@ Because these components are glued together using Chef, it's highly recommended 
 We don't provide prescriptive monitoring guidance at this time, but here's our advice:
 
 * Use existing Open source software (Sensu, Nagios, etc) to collect metrics and test the health of the OSS components.  This should be fairly straightforward to set up.
-  * Use [pgBadger](http://dalibo.github.io/pgbadger/) for Postgres log analysis
+  * Use [pgBadger](http://dalibo.github.io/pgbadger/) for Postgres log analysis and [pg_stat_statements](http://www.postgresql.org/docs/9.2/static/pgstatstatements.html)
   * Install the [RabbitMQ Management Plugin](https://www.rabbitmq.com/management.html) for detailed monitoring of RabbitMQ
 * Configure your monitoring systems and load balancers to query the Health status endpoint of erchef (https://mychefserver/_status)
 * Run a graphite server. erchef will send detailed statistics if you set the following in your `chef-server.rb` file:
@@ -109,8 +109,8 @@ In order to handle the greater number of connections, you must also increase the
 Suggested values for a high-performing cluster with 4-6 frontends:
 ```ruby
 postgresql['max_connections'] = 1024
-opscode_erchef['db_pool_size'] = 60
-oc_bifrost['db_pool_size'] = 60
+opscode_erchef['db_pool_size'] = 40
+oc_bifrost['db_pool_size'] = 40
 ```
 
 **Erchef to bifrost http connection pool:**
@@ -118,7 +118,8 @@ erchef also maintains a pool of http connections to bifrost, the authz service. 
 
 ```ruby
 oc_chef_authz['http_init_count'] = 100
-oc_chef_authz['http_max_count'] = 200
+oc_chef_authz['http_max_count'] = 100
+oc_chef_authz['http_queue_max'] = 200
 ```
 
 **Erchef depsolver and keygen tuning:**
@@ -127,8 +128,28 @@ Two expensive computations that erchef must perform are the depsolver (a Ruby pr
 Suggested values:
 ```ruby
 opscode_erchef['depsolver_worker_count'] = 4 # should equal the number of CPU cores
-opscode_erchef['depsolver_timeout'] = 120000
+opscode_erchef['depsolver_timeout'] = 10000
 opscode_erchef['keygen_cache_size'] = 1000
+```
+
+** NEW IN CHEF SERVER 12.1.0: Bounded queueing for Pooler **
+There are several upstream services who's connections are managed by `pooler`: sqerl (database connection), depsolver workers and the authz pool (connections from erchef to bifrost).  Currently when any of erchef's pools are exhausted, it throws a 500 error.  Chef Server 12.1 added the ability to add bounded queues to each pool which greatly reduces error rates and also reduces the need for large connection pools (which are suboptimal for Postgres).
+
+Queueing is disabled by default, but is enabled by setting the timeout value to `> 0`.  When using queueing, it's recommended to use a smaller pool size matched with a queue that is 1-2x the size of the pool.
+
+```ruby
+# erchef database pooler queue
+opscode_erchef['db_pool_queue_max'] = 40
+opscode_erchef['db_pooler_timeout'] = 2000
+
+# bifrost database pooler queue
+oc_bifrost['db_pooler_timeout'] = 2000
+oc_bifrost['db_pool_queue_max'] = 40
+
+# erchef depsolver queue
+opscode_erchef['depsolver_pool_queue_max'] = 10
+opscode_erchef['depsolver_pooler_timeout'] = 100000
+
 ```
 
 **Nginx cookbook caching:**
@@ -160,5 +181,5 @@ opscode_solr4['heap_size'] = 4096
 opscode_solr4['new_size'] = 256
 ```
 
-*WARNING: It is not recommended to use a JVM heap_size above 8GB, at that level the cost of Garbage Collection becomes too high and impacts performance worse than using a smaller heap*
 
+*WARNING: It is not recommended to use a JVM heap_size above 8GB, at that level the cost of Garbage Collection becomes too high and impacts performance worse than using a smaller heap*
