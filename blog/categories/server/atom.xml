@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Server | Irving's blog]]></title>
   <link href="http://irvingpop.github.io/blog/categories/server/atom.xml" rel="self"/>
   <link href="http://irvingpop.github.io/"/>
-  <updated>2015-05-18T13:36:15-07:00</updated>
+  <updated>2015-06-15T09:52:56-07:00</updated>
   <id>http://irvingpop.github.io/</id>
   <author>
     <name><![CDATA[Irving Popovetsky]]></name>
@@ -162,15 +162,16 @@ folsom_graphite['port'] = 2003
 <p>Suggested values for a high-performing cluster with 4-6 frontends:
 <code>ruby
 postgresql['max_connections'] = 1024
-opscode_erchef['db_pool_size'] = 60
-oc_bifrost['db_pool_size'] = 60
+opscode_erchef['db_pool_size'] = 40
+oc_bifrost['db_pool_size'] = 40
 </code></p>
 
 <p><strong>Erchef to bifrost http connection pool:</strong>
 erchef also maintains a pool of http connections to bifrost, the authz service.  It&rsquo;s important to raise the initial and maximum number of connections with respect to the database pool sizes.</p>
 
 <pre><code class="ruby">oc_chef_authz['http_init_count'] = 100
-oc_chef_authz['http_max_count'] = 200
+oc_chef_authz['http_max_count'] = 100
+oc_chef_authz['http_queue_max'] = 200
 </code></pre>
 
 <p><strong>Erchef depsolver and keygen tuning:</strong>
@@ -179,9 +180,27 @@ Two expensive computations that erchef must perform are the depsolver (a Ruby pr
 <p>Suggested values:
 <code>ruby
 opscode_erchef['depsolver_worker_count'] = 4 # should equal the number of CPU cores
-opscode_erchef['depsolver_timeout'] = 120000
+opscode_erchef['depsolver_timeout'] = 10000
 opscode_erchef['keygen_cache_size'] = 1000
 </code></p>
+
+<p><strong> NEW IN CHEF SERVER 12.1.0: Bounded queueing for Pooler </strong>
+There are several upstream services who&rsquo;s connections are managed by <code>pooler</code>: sqerl (database connection), depsolver workers and the authz pool (connections from erchef to bifrost).  Currently when any of erchef&rsquo;s pools are exhausted, it throws a 500 error.  Chef Server 12.1 added the ability to add bounded queues to each pool which greatly reduces error rates and also reduces the need for large connection pools (which are suboptimal for Postgres).</p>
+
+<p>Queueing is disabled by default, but is enabled by setting the timeout value to <code>&gt; 0</code>.  When using queueing, it&rsquo;s recommended to use a smaller pool size matched with a queue that is 1-2x the size of the pool.</p>
+
+<pre><code class="ruby"># erchef database pooler queue
+opscode_erchef['db_pool_queue_max'] = 40
+opscode_erchef['db_pooler_timeout'] = 2000
+
+# bifrost database pooler queue
+oc_bifrost['db_pooler_timeout'] = 2000
+oc_bifrost['db_pool_queue_max'] = 40
+
+# erchef depsolver queue
+opscode_erchef['depsolver_pool_queue_max'] = 10
+opscode_erchef['depsolver_pooler_timeout'] = 100000
+</code></pre>
 
 <p><strong>Nginx cookbook caching:</strong>
 A new feature in Chef Server 12.0.4 is <a href="https://www.chef.io/blog/2015/02/18/cookbook-caching/">Nginx cookbook caching</a>. This takes load off of the backend Bookshelf service by storing cookbook files in Nginx.</p>

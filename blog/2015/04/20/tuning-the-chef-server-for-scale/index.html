@@ -232,8 +232,8 @@
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">postgresql</span><span class="o">[</span><span class="s1">&#39;max_connections&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">1024</span>
-</span><span class='line'><span class="n">opscode_erchef</span><span class="o">[</span><span class="s1">&#39;db_pool_size&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">60</span>
-</span><span class='line'><span class="n">oc_bifrost</span><span class="o">[</span><span class="s1">&#39;db_pool_size&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">60</span>
+</span><span class='line'><span class="n">opscode_erchef</span><span class="o">[</span><span class="s1">&#39;db_pool_size&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">40</span>
+</span><span class='line'><span class="n">oc_bifrost</span><span class="o">[</span><span class="s1">&#39;db_pool_size&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">40</span>
 </span></code></pre></td></tr></table></div></figure></p>
 
 <p><strong>Erchef to bifrost http connection pool:</strong>
@@ -241,8 +241,10 @@ erchef also maintains a pool of http connections to bifrost, the authz service. 
 
 <p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
+<span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">oc_chef_authz</span><span class="o">[</span><span class="s1">&#39;http_init_count&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">100</span>
-</span><span class='line'><span class="n">oc_chef_authz</span><span class="o">[</span><span class="s1">&#39;http_max_count&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">200</span>
+</span><span class='line'><span class="n">oc_chef_authz</span><span class="o">[</span><span class="s1">&#39;http_max_count&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">100</span>
+</span><span class='line'><span class="n">oc_chef_authz</span><span class="o">[</span><span class="s1">&#39;http_queue_max&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">200</span>
 </span></code></pre></td></tr></table></div></figure></p>
 
 <p><strong>Erchef depsolver and keygen tuning:</strong>
@@ -253,8 +255,37 @@ Two expensive computations that erchef must perform are the depsolver (a Ruby pr
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">opscode_erchef</span><span class="o">[</span><span class="s1">&#39;depsolver_worker_count&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">4</span> <span class="c1"># should equal the number of CPU cores</span>
-</span><span class='line'><span class="n">opscode_erchef</span><span class="o">[</span><span class="s1">&#39;depsolver_timeout&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">120000</span>
+</span><span class='line'><span class="n">opscode_erchef</span><span class="o">[</span><span class="s1">&#39;depsolver_timeout&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">10000</span>
 </span><span class='line'><span class="n">opscode_erchef</span><span class="o">[</span><span class="s1">&#39;keygen_cache_size&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">1000</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><strong> NEW IN CHEF SERVER 12.1.0: Bounded queueing for Pooler </strong>
+There are several upstream services who&rsquo;s connections are managed by <code>pooler</code>: sqerl (database connection), depsolver workers and the authz pool (connections from erchef to bifrost).  Currently when any of erchef&rsquo;s pools are exhausted, it throws a 500 error.  Chef Server 12.1 added the ability to add bounded queues to each pool which greatly reduces error rates and also reduces the need for large connection pools (which are suboptimal for Postgres).</p>
+
+<p>Queueing is disabled by default, but is enabled by setting the timeout value to <code>&gt; 0</code>.  When using queueing, it&rsquo;s recommended to use a smaller pool size matched with a queue that is 1-2x the size of the pool.</p>
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># erchef database pooler queue</span>
+</span><span class='line'><span class="n">opscode_erchef</span><span class="o">[</span><span class="s1">&#39;db_pool_queue_max&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">40</span>
+</span><span class='line'><span class="n">opscode_erchef</span><span class="o">[</span><span class="s1">&#39;db_pooler_timeout&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">2000</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># bifrost database pooler queue</span>
+</span><span class='line'><span class="n">oc_bifrost</span><span class="o">[</span><span class="s1">&#39;db_pooler_timeout&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">2000</span>
+</span><span class='line'><span class="n">oc_bifrost</span><span class="o">[</span><span class="s1">&#39;db_pool_queue_max&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">40</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># erchef depsolver queue</span>
+</span><span class='line'><span class="n">opscode_erchef</span><span class="o">[</span><span class="s1">&#39;depsolver_pool_queue_max&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span class='line'><span class="n">opscode_erchef</span><span class="o">[</span><span class="s1">&#39;depsolver_pooler_timeout&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">100000</span>
 </span></code></pre></td></tr></table></div></figure></p>
 
 <p><strong>Nginx cookbook caching:</strong>
