@@ -43,7 +43,7 @@ We don't provide prescriptive monitoring guidance at this time, but here's our a
 * Configure your monitoring systems and load balancers to query the Health status endpoint of erchef (https://mychefserver/_status)
 * Run a graphite server. erchef will send detailed statistics if you set the following in your `chef-server.rb` file:
 ```ruby
-folsom_graphite['enable'] = true
+folsom_graphite['enabled'] = true
 folsom_graphite['host'] = 'graphite.mycompany.com'
 folsom_graphite['port'] = 2003
 ```
