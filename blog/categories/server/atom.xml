@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Server | Irving's blog]]></title>
   <link href="http://irvingpop.github.io/blog/categories/server/atom.xml" rel="self"/>
   <link href="http://irvingpop.github.io/"/>
-  <updated>2015-06-15T09:52:56-07:00</updated>
+  <updated>2015-06-17T11:09:49-07:00</updated>
   <id>http://irvingpop.github.io/</id>
   <author>
     <name><![CDATA[Irving Popovetsky]]></name>
@@ -62,14 +62,14 @@
 <li>Use existing Open source software (Sensu, Nagios, etc) to collect metrics and test the health of the OSS components.  This should be fairly straightforward to set up.
 
 <ul>
-<li>Use <a href="http://dalibo.github.io/pgbadger/">pgBadger</a> for Postgres log analysis</li>
+<li>Use <a href="http://dalibo.github.io/pgbadger/">pgBadger</a> for Postgres log analysis and <a href="http://www.postgresql.org/docs/9.2/static/pgstatstatements.html">pg_stat_statements</a></li>
 <li>Install the <a href="https://www.rabbitmq.com/management.html">RabbitMQ Management Plugin</a> for detailed monitoring of RabbitMQ</li>
 </ul>
 </li>
 <li>Configure your monitoring systems and load balancers to query the Health status endpoint of erchef (<a href="https://mychefserver/_status">https://mychefserver/_status</a>)</li>
 <li>Run a graphite server. erchef will send detailed statistics if you set the following in your <code>chef-server.rb</code> file:
 <code>ruby
-folsom_graphite['enable'] = true
+folsom_graphite['enabled'] = true
 folsom_graphite['host'] = 'graphite.mycompany.com'
 folsom_graphite['port'] = 2003
 </code></li>
