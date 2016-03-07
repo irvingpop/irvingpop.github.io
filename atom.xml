@@ -4,7 +4,7 @@
   <title><![CDATA[Irving's blog]]></title>
   <link href="http://irvingpop.github.io/atom.xml" rel="self"/>
   <link href="http://irvingpop.github.io/"/>
-  <updated>2015-06-17T11:09:49-07:00</updated>
+  <updated>2016-03-07T14:22:30-08:00</updated>
   <id>http://irvingpop.github.io/</id>
   <author>
     <name><![CDATA[Irving Popovetsky]]></name>
@@ -237,15 +237,19 @@ We already tune PostgreSQL memory settings to sane values based on the backend&r
 
 <p>To handle the heavy write load on large clusters, it is recommended to tune the checkpointer per [<a href="https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server">https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server</a>]</p>
 
+<p>Finally, the <code>log_min_duration_statement</code> setting is super useful for the detection and postmortem analysis of performance issues.  It is equivalent to the &ldquo;slow query log&rdquo; in MySQL.  The tuning setting below will log all of the queries that took longer than 1000ms to complete.</p>
+
 <p>Suggested values:
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
+<span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">postgresql</span><span class="o">[</span><span class="s1">&#39;checkpoint_segments&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">64</span>
 </span><span class='line'><span class="n">postgresql</span><span class="o">[</span><span class="s1">&#39;checkpoint_completion_target&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">0</span><span class="o">.</span><span class="mi">9</span>
+</span><span class='line'><span class="n">postgresql</span><span class="o">[</span><span class="s1">&#39;log_min_duration_statement&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">1000</span>
 </span></code></pre></td></tr></table></div></figure></p>
 
 <p><strong>Solr JVM tuning:</strong>
-By default we compute Solr&rsquo;s JVM heap size to be either 25% of system memory or 1024MB, whichever is smaller. Large chef server clusters should increase this value to smaller of 25% of system memory or 4096MB.</p>
+By default we compute Solr&rsquo;s JVM heap size to be either 25% of system memory or 1024MB, whichever is smaller. Large chef server clusters should increase this value to smaller of 25% of system memory or 4096MB.  Extremely large and busy Chef clusters run successfully with an 8GB Solr heap size.</p>
 
 <p>Suggested values:
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -254,7 +258,7 @@ By default we compute Solr&rsquo;s JVM heap size to be either 25% of system memo
 </span><span class='line'><span class="n">opscode_solr4</span><span class="o">[</span><span class="s1">&#39;new_size&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="mi">256</span>
 </span></code></pre></td></tr></table></div></figure></p>
 
-<p><em>WARNING: It is not recommended to use a JVM heap_size above 8GB, at that level the cost of Garbage Collection becomes too high and impacts performance worse than using a smaller heap</em></p>
+<p><em>WARNING: It is not recommended to use a JVM heap_size above 8GB, unless you have in-depth knowledge of JVM tuning combined with detailed JVM monitoring</em></p>
 ]]></content>
   </entry>
   
